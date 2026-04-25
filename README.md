@@ -5,8 +5,8 @@ Real-time voice conversation with an Agora agent, using a Next.js web client and
 ## Architecture
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./system-architecture-dark.svg">
-  <img src="./system-architecture.svg" alt="System architecture" />
+  <source media="(prefers-color-scheme: dark)" srcset="./.github/images/system-architecture-dark.svg">
+  <img src="./.github/images/system-architecture.svg" alt="System architecture" />
 </picture>
 
 ## Prerequisites

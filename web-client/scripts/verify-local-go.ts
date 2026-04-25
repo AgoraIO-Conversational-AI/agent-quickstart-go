@@ -1,4 +1,6 @@
 import { spawn } from 'node:child_process'
+import { mkdir } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 
@@ -80,19 +82,17 @@ async function waitForHealthyBackend(
 async function main() {
   const projectRoot = process.cwd()
   const serverRoot = path.resolve(projectRoot, '..', 'server-go')
-  const goCacheDir = process.env.GOCACHE ?? path.join(serverRoot, '.cache', 'go-build')
-  const fakeServerBin = path.join(serverRoot, '.cache', 'fake-server-smoke')
+  const fakeServerBin = path.join(tmpdir(), `fake-server-smoke-${process.pid}`)
   const port = 43140 + Math.floor(Math.random() * 20)
   const backendUrl = `http://127.0.0.1:${port}`
   const originalBackendUrl = process.env.AGENT_BACKEND_URL
 
+  await mkdir(path.dirname(fakeServerBin), { recursive: true })
+
   const buildProcess = spawnProcess(
     ['go', 'build', '-o', fakeServerBin, './cmd/fake-server'],
     serverRoot,
-    {
-      ...process.env,
-      GOCACHE: goCacheDir,
-    },
+    process.env,
   )
 
   const buildExitCode = await buildProcess.exited

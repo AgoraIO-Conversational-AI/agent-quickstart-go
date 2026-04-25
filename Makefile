@@ -1,5 +1,4 @@
 SHELL := /bin/bash
-GO_CACHE_DIR := $(CURDIR)/server-go/.cache/go-build
 GO_BIN_DIR := $(CURDIR)/server-go/bin
 
 .PHONY: help setup setup-env setup-backend setup-frontend doctor doctor-local fmt fmt-backend dev backend frontend build build-backend build-web test test-backend verify verify-local verify-local-go verify-backend verify-web verify-web-api verify-web-proxy verify-web-build clean clean-backend clean-frontend
@@ -38,8 +37,7 @@ setup-env:
 	fi
 
 setup-backend:
-	mkdir -p "$(GO_CACHE_DIR)"
-	cd server-go && GOCACHE="$(GO_CACHE_DIR)" go mod tidy
+	cd server-go && go mod tidy
 
 setup-frontend:
 	@if [ ! -d node_modules ]; then \
@@ -79,8 +77,7 @@ dev:
 	wait
 
 backend:
-	mkdir -p "$(GO_CACHE_DIR)"
-	cd server-go && GOCACHE="$(GO_CACHE_DIR)" go run .
+	cd server-go && go run .
 
 frontend:
 	cd web-client && AGENT_BACKEND_URL=http://localhost:8000 pnpm dev
@@ -88,8 +85,8 @@ frontend:
 build: build-backend build-web
 
 build-backend:
-	mkdir -p "$(GO_CACHE_DIR)" "$(GO_BIN_DIR)"
-	cd server-go && GOCACHE="$(GO_CACHE_DIR)" go build -o "$(GO_BIN_DIR)/agent-quickstart-go" .
+	mkdir -p "$(GO_BIN_DIR)"
+	cd server-go && go build -o "$(GO_BIN_DIR)/agent-quickstart-go" .
 
 build-web:
 	cd web-client && pnpm build
@@ -103,12 +100,10 @@ verify: verify-web
 verify-local: doctor-local verify-backend verify-local-go verify-web-proxy verify-web-build
 
 verify-local-go:
-	mkdir -p "$(GO_CACHE_DIR)"
-	cd web-client && GOCACHE="$(GO_CACHE_DIR)" pnpm node --import tsx scripts/verify-local-go.ts
+	cd web-client && pnpm node --import tsx scripts/verify-local-go.ts
 
 verify-backend:
-	mkdir -p "$(GO_CACHE_DIR)"
-	cd server-go && GOCACHE="$(GO_CACHE_DIR)" go test ./...
+	cd server-go && go test ./...
 
 verify-web: doctor verify-web-api verify-web-build
 
@@ -123,7 +118,7 @@ verify-web-build: build-web
 clean: clean-backend clean-frontend
 
 clean-backend:
-	rm -rf server-go/bin server-go/.cache
+	rm -rf server-go/bin
 
 clean-frontend:
 	rm -rf node_modules web-client/node_modules web-client/.next web-client/dist

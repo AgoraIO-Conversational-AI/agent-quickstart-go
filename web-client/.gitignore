@@ -1,11 +1,11 @@
-# Dependencies
+# Frontend dependencies
 node_modules/
 .pnp
 .pnp.js
 .pnpm-store/
 .npm
 
-# Testing
+# Frontend testing output
 coverage
 *.lcov
 
@@ -16,31 +16,9 @@ build
 dist
 .parcel-cache
 
-# Production
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# Environment variables
-.env
-.env*.local
-
-# Vercel
+# Frontend deployment/runtime
 .vercel
 
-# TypeScript
+# Frontend TypeScript output
 *.tsbuildinfo
 next-env.d.ts
-
-# IDE
-.vscode
-.idea
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db

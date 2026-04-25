@@ -1,18 +1,5 @@
-# Environment variables
-.env.local
-.env
-
-# Go
+# Go backend artifacts
 bin/
 *.test
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
+*.out
+.coverprofile

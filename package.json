@@ -1,0 +1,45 @@
+{
+  "name": "agora-conversational-ai-demo-go",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@10.23.0",
+  "workspaces": [
+    "web-client"
+  ],
+  "scripts": {
+    "dev": "pnpm run dev:check && concurrently -n backend,frontend -c blue,green \"pnpm run dev:backend\" \"pnpm run dev:frontend\"",
+    "dev:check": "pnpm run setup:env && pnpm run setup:deps",
+    "dev:backend": "cd server-go && go run .",
+    "dev:frontend": "cd web-client && AGENT_BACKEND_URL=http://localhost:8000 pnpm dev",
+    "backend": "cd server-go && go run .",
+    "frontend": "cd web-client && AGENT_BACKEND_URL=http://localhost:8000 pnpm dev",
+    "setup": "pnpm run setup:env && pnpm run setup:backend && pnpm run setup:frontend && pnpm run setup:done",
+    "setup:env": "test -f server-go/.env.local || (cp server-go/.env.example server-go/.env.local && echo '\n⚠️  Created server-go/.env.local - Please edit your Agora credentials.' && echo '   Required: AGORA_APP_ID and AGORA_APP_CERTIFICATE. Managed provider access must be enabled for this project.\n')",
+    "setup:deps": "test -d node_modules || (echo 'Installing workspace dependencies...' && pnpm install)",
+    "setup:backend": "cd server-go && go mod tidy",
+    "setup:frontend": "pnpm install",
+    "setup:done": "echo '\n✅ Setup complete! Next steps:' && echo '   1. Run: agora project env write server-go/.env.local --with-secrets' && echo '   2. Run: make doctor-local' && echo '   3. Run: make dev\n'",
+    "doctor": "bash -c 'set -e; echo \"Checking shared repo prerequisites...\"; command -v pnpm >/dev/null && echo \"- pnpm available\" || { echo \"- pnpm not found\"; exit 1; }; test -d node_modules && echo \"- workspace dependencies installed\" || { echo \"- root node_modules missing; run pnpm install\"; exit 1; }'",
+    "doctor:local": "bash -c 'set -e; pnpm run doctor; command -v go >/dev/null && echo \"- go available\" || { echo \"- go not found\"; exit 1; }; GO_VERSION=\"$(go env GOVERSION | sed \"s/^go//\")\"; case \"$GO_VERSION\" in 1.23*|1.24*|1.25*|1.26*|2.*) echo \"- go version $GO_VERSION\" ;; *) echo \"- go 1.23 or newer is required; found $GO_VERSION\"; exit 1 ;; esac; test -f server-go/.env.local && echo \"- server-go/.env.local present\" || { echo \"- missing server-go/.env.local\"; exit 1; }; grep -Eq \"^AGORA_APP_ID=.+$\" server-go/.env.local && echo \"- AGORA_APP_ID configured\" || { echo \"- AGORA_APP_ID missing in server-go/.env.local\"; exit 1; }; grep -Eq \"^AGORA_APP_CERTIFICATE=.+$\" server-go/.env.local && echo \"- AGORA_APP_CERTIFICATE configured\" || { echo \"- AGORA_APP_CERTIFICATE missing in server-go/.env.local\"; exit 1; }'",
+    "fmt": "cd server-go && gofmt -w *.go cmd/fake-server/*.go",
+    "build": "pnpm run build:backend && pnpm run build:web",
+    "build:backend": "mkdir -p server-go/bin server-go/.cache/go-build && cd server-go && GOCACHE=$(pwd)/.cache/go-build go build -o $(pwd)/bin/agent-quickstart-go .",
+    "build:web": "cd web-client && pnpm build",
+    "test": "pnpm run test:backend",
+    "test:backend": "cd server-go && go test ./...",
+    "verify": "pnpm run verify:web",
+    "verify:local": "pnpm run doctor:local && pnpm run verify:backend && pnpm run verify:local:go && pnpm run verify:web:proxy && pnpm run verify:web:build",
+    "verify:local:go": "cd web-client && GOCACHE=../server-go/.cache/go-build pnpm node --import tsx scripts/verify-local-go.ts",
+    "verify:backend": "cd server-go && go test ./...",
+    "verify:web": "pnpm run doctor && pnpm run verify:web:api && pnpm run verify:web:build",
+    "verify:web:api": "cd web-client && pnpm node --import tsx scripts/verify-api-contracts.ts",
+    "verify:web:proxy": "cd web-client && pnpm node --import tsx scripts/verify-local-proxy.ts",
+    "verify:web:build": "cd web-client && pnpm build",
+    "clean": "pnpm run clean:backend && pnpm run clean:frontend",
+    "clean:backend": "rm -rf server-go/bin server-go/.cache",
+    "clean:frontend": "rm -rf node_modules web-client/node_modules web-client/.next web-client/dist"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

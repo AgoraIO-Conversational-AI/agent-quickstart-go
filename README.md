@@ -2,22 +2,12 @@
 
 Real-time voice conversation with an Agora agent, using a Next.js web client and a Go backend built with Gin plus the official Agora Agent Server SDK for Go.
 
-## System Diagram
+## Architecture
 
-```text
-Local mode
-Browser
-  -> Next.js app on :3000
-  -> /api/* route handlers
-  -> Gin backend on :8000
-  -> Agora Cloud
-
-Deployed mode
-Browser
-  -> Next.js app
-  -> /api/* route handlers in-process
-  -> Agora Cloud
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./system-architecture-dark.svg">
+  <img src="./system-architecture.svg" alt="System architecture" />
+</picture>
 
 ## Prerequisites
 

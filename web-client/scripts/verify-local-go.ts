@@ -53,11 +53,7 @@ function spawnProcess(cmd: string[], cwd: string, env: NodeJS.ProcessEnv): Child
   }
 }
 
-async function waitForHealthyBackend(
-  baseUrl: string,
-  timeoutMs: number,
-  readServerStderr: () => Promise<string>,
-) {
+async function waitForHealthyBackend(baseUrl: string, timeoutMs: number, readServerStderr: () => Promise<string>) {
   const deadline = Date.now() + timeoutMs
   let lastError = 'backend did not start'
 
@@ -89,11 +85,7 @@ async function main() {
 
   await mkdir(path.dirname(fakeServerBin), { recursive: true })
 
-  const buildProcess = spawnProcess(
-    ['go', 'build', '-o', fakeServerBin, './cmd/fake-server'],
-    serverRoot,
-    process.env,
-  )
+  const buildProcess = spawnProcess(['go', 'build', '-o', fakeServerBin, './cmd/fake-server'], serverRoot, process.env)
 
   const buildExitCode = await buildProcess.exited
   if (buildExitCode !== 0) {
@@ -101,14 +93,10 @@ async function main() {
     throw new Error(`Failed to build fake Go server.${stderr ? ` Go said: ${stderr}` : ''}`)
   }
 
-  const serverProcess = spawnProcess(
-    [fakeServerBin],
-    serverRoot,
-    {
-      ...process.env,
-      PORT: String(port),
-    },
-  )
+  const serverProcess = spawnProcess([fakeServerBin], serverRoot, {
+    ...process.env,
+    PORT: String(port),
+  })
 
   try {
     await waitForHealthyBackend(backendUrl, 20_000, async () => {
@@ -126,7 +114,10 @@ async function main() {
 
     const data = configBody.data as Record<string, unknown> | undefined
     assert(data?.uid === '4321', 'GET /api/get_config should preserve the requested uid through the Go backend')
-    assert(data?.channel_name === 'go-smoke', 'GET /api/get_config should preserve the requested channel through the Go backend')
+    assert(
+      data?.channel_name === 'go-smoke',
+      'GET /api/get_config should preserve the requested channel through the Go backend',
+    )
     assert(data?.token === 'fake-token', 'GET /api/get_config should return the token from the Go backend')
     assert(data?.agent_uid === '9999', 'GET /api/get_config should return the agent uid from the Go backend')
 

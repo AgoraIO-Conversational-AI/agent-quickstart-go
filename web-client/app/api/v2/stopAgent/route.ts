@@ -1,9 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server'
-import {
-  createAgoraClient,
-  isAgentAlreadyStoppingOrStopped,
-  proxyToLocalBackend,
-} from '@/lib/server/agora'
+import { createAgoraClient, isAgentAlreadyStoppingOrStopped, proxyToLocalBackend } from '@/lib/server/agora'
+import { type NextRequest, NextResponse } from 'next/server'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'

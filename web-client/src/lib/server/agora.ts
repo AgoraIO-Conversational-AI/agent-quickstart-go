@@ -1,13 +1,5 @@
-import {
-  AgoraClient,
-  Agent,
-  Area,
-  DeepgramSTT,
-  ExpiresIn,
-  MiniMaxTTS,
-  OpenAI,
-} from 'agora-agent-server-sdk'
-import { RtcTokenBuilder, RtcRole } from 'agora-token'
+import { Agent, AgoraClient, Area, DeepgramSTT, ExpiresIn, MiniMaxTTS, OpenAI } from 'agora-agent-server-sdk'
+import { RtcRole, RtcTokenBuilder } from 'agora-token'
 
 const ADA_PROMPT = `You are Ada, an agentic developer advocate from Agora. You help developers understand and build with Agora's Conversational AI platform.
 
@@ -31,10 +23,7 @@ export function getAgoraCredentials() {
 }
 
 export function getAgentGreeting() {
-  return (
-    process.env.AGENT_GREETING ??
-    "Hi there! I'm Ada, your virtual assistant from Agora. How can I help?"
-  )
+  return process.env.AGENT_GREETING ?? "Hi there! I'm Ada, your virtual assistant from Agora. How can I help?"
 }
 
 export function generateChannelName() {
@@ -127,11 +116,7 @@ export function getAgentBackendUrl() {
   return process.env.AGENT_BACKEND_URL?.replace(/\/$/, '') ?? null
 }
 
-export async function proxyToLocalBackend(
-  path: string,
-  init?: RequestInit,
-  searchParams?: URLSearchParams,
-) {
+export async function proxyToLocalBackend(path: string, init?: RequestInit, searchParams?: URLSearchParams) {
   const backendUrl = getAgentBackendUrl()
   if (!backendUrl) {
     return null

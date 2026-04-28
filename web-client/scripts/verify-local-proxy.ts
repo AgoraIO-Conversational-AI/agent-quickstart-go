@@ -41,7 +41,7 @@ async function withStubBackend<T>(run: (baseUrl: string) => Promise<T>) {
     }
 
     if (request.method === 'POST' && url.pathname === '/v2/startAgent') {
-      const parsedBody = await request.json() as { rtcUid?: number; userUid?: number }
+      const parsedBody = (await request.json()) as { rtcUid?: number; userUid?: number }
       if (parsedBody.rtcUid !== 9999 || parsedBody.userUid !== 4321) {
         return Response.json({ detail: 'unexpected proxied payload' }, { status: 400 })
       }
@@ -83,7 +83,10 @@ async function main() {
     const configBody = await getJson(configResponse)
     assert(configResponse.status === 200, 'GET /api/get_config should proxy successfully')
     assert(configBody.code === 0, 'GET /api/get_config should preserve proxied success payload')
-    assert((configBody.data as Record<string, unknown>)?.token === 'stub-token', 'GET /api/get_config should return proxied token')
+    assert(
+      (configBody.data as Record<string, unknown>)?.token === 'stub-token',
+      'GET /api/get_config should return proxied token',
+    )
 
     const startResponse = await startAgent(
       new NextRequest('http://localhost:3000/api/v2/startAgent', {
@@ -97,7 +100,10 @@ async function main() {
     )
     const startBody = await getJson(startResponse)
     assert(startResponse.status === 200, 'POST /api/v2/startAgent should proxy successfully')
-    assert((startBody.data as Record<string, unknown>)?.agent_id === 'agent-proxied', 'POST /api/v2/startAgent should return proxied agent id')
+    assert(
+      (startBody.data as Record<string, unknown>)?.agent_id === 'agent-proxied',
+      'POST /api/v2/startAgent should return proxied agent id',
+    )
 
     const stopResponse = await stopAgent(
       new NextRequest('http://localhost:3000/api/v2/stopAgent', {

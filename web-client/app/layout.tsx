@@ -1,9 +1,43 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
+import { Instrument_Sans } from 'next/font/google'
 import '@/index.css'
 
+const instrumentSans = Instrument_Sans({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-instrument-sans',
+})
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+}
+
 export const metadata: Metadata = {
-  title: 'Go Voice Agent Quickstart',
-  description: 'Agora conversational AI quickstart with live transcript and runtime logs',
+  title: 'Talk to a voice agent now | Agora',
+  description:
+    "Go quickstart: real-time voice agent with live transcript, streaming audio, and low latency from Agora's Conversational AI Engine—one backend to run, adapt, and deploy.",
+  icons: {
+    icon: [
+      { url: '/favicon.ico' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [{ url: '/apple-touch-icon.png' }],
+    other: [
+      {
+        url: '/android-chrome-192x192.png',
+        sizes: '192x192',
+        type: 'image/png',
+      },
+      {
+        url: '/android-chrome-512x512.png',
+        sizes: '512x512',
+        type: 'image/png',
+      },
+    ],
+  },
 }
 
 export default function RootLayout({
@@ -12,7 +46,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={instrumentSans.variable}>
       <body>{children}</body>
     </html>
   )

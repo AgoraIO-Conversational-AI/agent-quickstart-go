@@ -11,8 +11,10 @@ import (
 	"sync"
 	"time"
 
+	Agora "github.com/AgoraIO-Conversational-AI/agent-server-sdk-go"
 	"github.com/AgoraIO-Conversational-AI/agent-server-sdk-go/agentkit"
 	"github.com/AgoraIO-Conversational-AI/agent-server-sdk-go/agentkit/vendors"
+	"github.com/AgoraIO-Conversational-AI/agent-server-sdk-go/client"
 	"github.com/AgoraIO-Conversational-AI/agent-server-sdk-go/option"
 )
 
@@ -63,11 +65,13 @@ func newAgentService() (*agentService, error) {
 		return nil, errors.New("AGORA_APP_ID and AGORA_APP_CERTIFICATE are required")
 	}
 
-	client := agentkit.NewAgoraClient(agentkit.AgoraClientOptions{
-		Area:           option.AreaUS,
+	generatedClient := client.NewClient(option.WithBaseURL(Agora.Environments.Default))
+	agoraClient := &agentkit.AgoraClient{
+		Agents:         generatedClient.Agents,
 		AppID:          appID,
 		AppCertificate: certificate,
-	})
+		AuthMode:       agentkit.AuthModeAppCredentials,
+	}
 
 	return &agentService{
 		appID:       appID,
@@ -76,8 +80,8 @@ func newAgentService() (*agentService, error) {
 			strings.TrimSpace(os.Getenv("AGENT_GREETING")),
 			"Hi there! I'm Ada, your virtual assistant from Agora. How can I help?",
 		),
-		sessionClient: client,
-		stopClient:    client,
+		sessionClient: agoraClient,
+		stopClient:    agoraClient,
 		sessions:      make(map[string]sessionStopper),
 	}, nil
 }
@@ -140,7 +144,7 @@ func (s *agentService) start(channelName string, agentUID, userUID int) (*startA
 	enableTools := true
 	enableErrorMessage := true
 	dataChannel := agentkit.ParametersDataChannel("rtm")
-	enableStringUID := true
+	enableStringUID := false
 	idleTimeout := 30
 	speechThreshold := 0.5
 	endOfSpeechMode := agentkit.EndOfSpeechMode("vad")

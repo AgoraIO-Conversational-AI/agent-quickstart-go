@@ -1,5 +1,5 @@
-import { NextRequest } from 'next/server'
 import { RtcTokenBuilder } from 'agora-token'
+import { NextRequest } from 'next/server'
 
 import { GET as getConfig } from '../app/api/get_config/route'
 import { POST as startAgent } from '../app/api/v2/startAgent/route'
@@ -42,7 +42,10 @@ async function verifyGetConfigRoute() {
     assert(data?.uid === '1234', 'GET /api/get_config should preserve uid')
     assert(data?.channel_name === 'test-channel', 'GET /api/get_config should preserve channel_name')
     assert(data?.token === 'mock-rtc-rtm-token', 'GET /api/get_config should return the RTC+RTM token')
-    assert(typeof data?.agent_uid === 'string' && data.agent_uid.length > 0, 'GET /api/get_config should return agent_uid')
+    assert(
+      typeof data?.agent_uid === 'string' && data.agent_uid.length > 0,
+      'GET /api/get_config should return agent_uid',
+    )
 
     assert(Array.isArray(tokenBuilderArgs), 'GET /api/get_config should call buildTokenWithRtm')
     assert(tokenBuilderArgs?.[2] === 'test-channel', 'buildTokenWithRtm should use the requested channel')
@@ -63,7 +66,10 @@ async function verifyStartAgentValidation() {
   const body = await getJson(response)
 
   assert(response.status === 400, 'POST /api/v2/startAgent should reject missing fields')
-  assert(body.detail === 'channelName, rtcUid, and userUid are required', 'POST /api/v2/startAgent should explain validation failure')
+  assert(
+    body.detail === 'channelName, rtcUid, and userUid are required',
+    'POST /api/v2/startAgent should explain validation failure',
+  )
 }
 
 async function verifyStopAgentValidation() {

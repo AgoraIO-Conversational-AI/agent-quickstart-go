@@ -1,24 +1,43 @@
-# Frontend dependencies
-node_modules/
+# Dependencies (use Bun; do not commit npm/pnpm lockfiles)
+node_modules
+package-lock.json
+pnpm-lock.yaml
 .pnp
 .pnp.js
-.pnpm-store/
-.npm
 
-# Frontend testing output
+# Testing
 coverage
-*.lcov
 
 # Next.js
 .next/
 out/
 build
 dist
-.parcel-cache
 
-# Frontend deployment/runtime
+# Production
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env*.local
+
+# Vercel
 .vercel
 
-# Frontend TypeScript output
+# TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

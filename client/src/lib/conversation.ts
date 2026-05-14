@@ -1,11 +1,14 @@
 import {
   type AgentState,
   type AgentTranscription,
-  type TranscriptHelperItem,
   TurnStatus,
+  type TranscriptHelperItem,
   type UserTranscription,
 } from 'agora-agent-client-toolkit'
-import type { AgentVisualizerState, IMessageListItem } from 'agora-agent-uikit'
+import {
+  type AgentVisualizerState,
+  type IMessageListItem,
+} from 'agora-agent-uikit'
 
 export function normalizeTranscriptSpacing(text: string): string {
   return text
@@ -58,7 +61,10 @@ function toMessageListItem(
     uid: Number(item.uid) || 0,
     text: typeof item.text === 'string' ? item.text : '',
     status: item.status as unknown as IMessageListItem['status'],
-    createdAt: typeof item._time === 'number' ? normalizeTimestampMs(item._time) : undefined,
+    createdAt:
+      typeof item._time === 'number'
+        ? normalizeTimestampMs(item._time)
+        : undefined,
   }
 }
 
@@ -68,14 +74,19 @@ export function normalizeTranscript(
 ) {
   return transcript.map((item) => {
     const nextUid = item.uid === '0' ? localUid : item.uid
-    const nextText = typeof item.text === 'string' ? normalizeTranscriptSpacing(item.text) : item.text
+    const nextText =
+      typeof item.text === 'string' ? normalizeTranscriptSpacing(item.text) : item.text
 
     return { ...item, uid: nextUid, text: nextText }
   })
 }
 
-export function getMessageList(transcript: TranscriptHelperItem<Partial<UserTranscription | AgentTranscription>>[]) {
-  return transcript.filter((item) => item.status !== TurnStatus.IN_PROGRESS).map(toMessageListItem)
+export function getMessageList(
+  transcript: TranscriptHelperItem<Partial<UserTranscription | AgentTranscription>>[],
+) {
+  return transcript
+    .filter((item) => item.status !== TurnStatus.IN_PROGRESS)
+    .map(toMessageListItem)
 }
 
 export function getCurrentInProgressMessage(

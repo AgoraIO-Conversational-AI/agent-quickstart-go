@@ -29,7 +29,7 @@ Install the CLI (skip if already installed), scaffold the Go quickstart, install
    agora init my-go-demo --template go
    cd my-go-demo
    make setup
-   agora project env write server-go/.env.local --with-secrets
+   agora project env write server/.env.local --with-secrets
    make dev
    ```
 
@@ -47,7 +47,7 @@ cd agent-quickstart-go
 agora login
 agora project use <your-project>
 make setup
-agora project env write server-go/.env.local --with-secrets
+agora project env write server/.env.local --with-secrets
 make doctor-local
 make dev
 ```
@@ -59,11 +59,11 @@ Services:
 
 ## Deploy
 
-Default deployment is `web-client` only (single target). In this mode, Next route handlers run in-process for:
+Default deployment is `client` only (single target). In this mode, Next route handlers run in-process for:
 
 - `/api/get_config`
-- `/api/v2/startAgent`
-- `/api/v2/stopAgent`
+- `/api/startAgent`
+- `/api/stopAgent`
 
 Required deployment env vars:
 
@@ -79,13 +79,13 @@ To export env values from your Agora CLI-bound project:
 
 ```bash
 agora project use <your-project>
-agora project env write server-go/.env.local --with-secrets
-rg "^(AGORA_APP_ID|AGORA_APP_CERTIFICATE)=" server-go/.env.local
+agora project env write server/.env.local --with-secrets
+rg "^(AGORA_APP_ID|AGORA_APP_CERTIFICATE)=" server/.env.local
 ```
 
 ## Environment variables
 
-Primary backend env file: [`server-go/.env.example`](server-go/.env.example).
+Primary backend env file: [`server/.env.example`](server/.env.example).
 
 | Variable | Required | Default | Notes |
 | --- | :---: | :---: | --- |
@@ -129,9 +129,9 @@ The browser always calls Next `/api/*` routes. In local mode those routes proxy 
 
 ## What You Get
 
-- `web-client/` Next.js client with voice conversation UI
-- `server-go/` Gin backend using official Agora Agent Server SDK for Go
-- stable `/api/get_config`, `/api/v2/startAgent`, `/api/v2/stopAgent` browser contract
+- `client/` Next.js client with voice conversation UI
+- `server/` Gin backend using official Agora Agent Server SDK for Go
+- stable `/api/get_config`, `/api/startAgent`, `/api/stopAgent` browser contract
 - combined RTC + RTM token generation from `AGORA_APP_ID` + `AGORA_APP_CERTIFICATE`
 
 ## How It Works
@@ -139,20 +139,20 @@ The browser always calls Next `/api/*` routes. In local mode those routes proxy 
 1. Browser requests config from `/api/get_config`.
 2. Backend returns app ID, channel, user UID, agent UID, and token.
 3. Browser joins RTC/RTM and streams audio.
-4. Browser calls `/api/v2/startAgent`; backend starts the cloud agent session.
-5. Browser receives transcript/state updates; `/api/v2/stopAgent` ends the session.
+4. Browser calls `/api/startAgent`; backend starts the cloud agent session.
+5. Browser receives transcript/state updates; `/api/stopAgent` ends the session.
 
 ## Repo Map
 
-- `web-client/` — Next.js 16 + React 19 + TypeScript frontend
-- `server-go/` — Gin backend + Agora Agent Server SDK integration
+- `client/` — Next.js 16 + React 19 + TypeScript frontend
+- `server/` — Gin backend + Agora Agent Server SDK integration
 - `ARCHITECTURE.md` — system flow and runtime modes
 - `AGENTS.md` — contributor agent instructions
 
 ## Troubleshooting
 
-- **`make doctor-local` fails:** confirm Go 1.23+ and non-empty `AGORA_APP_ID` + `AGORA_APP_CERTIFICATE` in `server-go/.env.local`.
-- **Credentials missing:** run `agora project env write server-go/.env.local --with-secrets`.
+- **`make doctor-local` fails:** confirm Go 1.23+ and non-empty `AGORA_APP_ID` + `AGORA_APP_CERTIFICATE` in `server/.env.local`.
+- **Credentials missing:** run `agora project env write server/.env.local --with-secrets`.
 - **Frontend cannot reach backend in local mode:** confirm `make dev` is running and frontend uses `AGENT_BACKEND_URL=http://localhost:8000`.
 - **Agent does not join channel:** verify the selected Agora project has Conversational AI managed provider support enabled.
 - **Unsure who owns `/api/*`:** local mode proxies to Gin; deployed mode runs handlers in-process unless `AGENT_BACKEND_URL` is set.
@@ -161,8 +161,8 @@ The browser always calls Next `/api/*` routes. In local mode those routes proxy 
 
 - [ARCHITECTURE.md](./ARCHITECTURE.md)
 - [AGENTS.md](./AGENTS.md)
-- [web-client/ARCHITECTURE.md](./web-client/ARCHITECTURE.md)
-- [server-go/ARCHITECTURE.md](./server-go/ARCHITECTURE.md)
+- [client/ARCHITECTURE.md](./client/ARCHITECTURE.md)
+- [server/ARCHITECTURE.md](./server/ARCHITECTURE.md)
 
 ## License
 

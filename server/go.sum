@@ -1,7 +1,7 @@
 github.com/AgoraIO-Community/go-tokenbuilder v1.4.0 h1:2zwmhpoAtqVZnZeNxltU0DBXqOtyDniGT4LBTbZETBg=
 github.com/AgoraIO-Community/go-tokenbuilder v1.4.0/go.mod h1:xqPdaiFG00M1hNN/CCYh8j+NTmkiJsQtqYdf4YAlncA=
-github.com/AgoraIO-Conversational-AI/agent-server-sdk-go v1.3.2 h1:RlTa2j48CYgH8Xm8uexrK6Kwbdu1+5YkHQx+fjajdUM=
-github.com/AgoraIO-Conversational-AI/agent-server-sdk-go v1.3.2/go.mod h1:tAVZmgKb05vNn2nI+jMgnwyTmB0z412brOIaMuz1TEc=
+github.com/AgoraIO-Conversational-AI/agent-server-sdk-go v1.3.4 h1:2x5KSAJfUOo3gnl0HBWDPPNHsKA3jdPOP/wgam7boeY=
+github.com/AgoraIO-Conversational-AI/agent-server-sdk-go v1.3.4/go.mod h1:tAVZmgKb05vNn2nI+jMgnwyTmB0z412brOIaMuz1TEc=
 github.com/bytedance/sonic v1.14.0 h1:/OfKt8HFw0kh2rj8N0F6C/qPGRESq0BbaNZgcNXXzQQ=
 github.com/bytedance/sonic v1.14.0/go.mod h1:WoEbx8WTcFJfzCe0hbmyTGrfjt8PzNEBdxlNUO24NhA=
 github.com/bytedance/sonic/loader v0.3.0 h1:dskwH8edlzNMctoruo8FPTJDF3vLtDT0sXZwvZJyqeA=

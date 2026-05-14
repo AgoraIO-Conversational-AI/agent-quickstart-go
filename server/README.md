@@ -4,11 +4,40 @@ Gin-based Agora Conversational AI backend using the official Go SDK: `github.com
 
 ## Quick Start
 
-From `server-go/`:
+Recommended from the repo root.
+
+Repo setup:
+
+```bash
+make setup
+```
+
+Agora credentials:
+
+```bash
+agora project env write server-go/.env.local --with-secrets
+```
+
+Run the app:
+
+```bash
+make dev
+```
+
+This assumes the Agora CLI is installed and logged in. The command uses the project selected in your Agora CLI context, which is usually your default account project.
+
+`make setup` installs or refreshes both the Go backend dependencies and the frontend workspace dependencies. `make dev` runs the Gin backend and the Next.js frontend together, with the frontend proxying `/api/*` requests to the backend.
+
+If you are not using the Agora CLI, create the env file manually and fill in your project values:
+
+```bash
+cp server-go/.env.example server-go/.env.local
+```
+
+Backend-only workflow from `server-go/`:
 
 ```bash
 cp .env.example .env.local
-agora project env write .env.local --with-secrets
 go mod tidy
 gofmt -w *.go cmd/fake-server/*.go
 go test ./...
@@ -16,13 +45,10 @@ go build -o ./bin/agent-quickstart-go .
 go run .
 ```
 
-Recommended from the repo root:
+Backend-only Agora CLI env write from `server-go/`:
 
 ```bash
-agora login
-agora project create my-first-voice-agent --feature rtc --feature convoai
-agora project use my-first-voice-agent
-agora project env write server-go/.env.local --with-secrets
+agora project env write .env.local --with-secrets
 ```
 
 Required env vars:
@@ -45,6 +71,27 @@ PORT=8000
 ```
 
 `.env.example` is only the reference template. The recommended setup flow is to let the Agora CLI write the real values into `.env.local`.
+
+If you still need to authenticate with the CLI:
+
+```bash
+agora login
+```
+
+To select a specific existing project before writing env values, run this from the repo root:
+
+```bash
+agora project use <project-id-or-name>
+agora project env write server-go/.env.local --with-secrets
+```
+
+To create a new project instead of using your default project:
+
+```bash
+agora project create my-first-voice-agent --feature rtc --feature convoai
+agora project use my-first-voice-agent
+agora project env write server-go/.env.local --with-secrets
+```
 
 ## API Endpoints
 

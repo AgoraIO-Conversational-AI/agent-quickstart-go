@@ -11,7 +11,6 @@ import (
 	"sync"
 	"time"
 
-	Agora "github.com/AgoraIO-Conversational-AI/agent-server-sdk-go"
 	"github.com/AgoraIO-Conversational-AI/agent-server-sdk-go/agentkit"
 	"github.com/AgoraIO-Conversational-AI/agent-server-sdk-go/agentkit/vendors"
 	"github.com/AgoraIO-Conversational-AI/agent-server-sdk-go/client"
@@ -65,7 +64,7 @@ func newAgentService() (*agentService, error) {
 		return nil, errors.New("AGORA_APP_ID and AGORA_APP_CERTIFICATE are required")
 	}
 
-	generatedClient := client.NewClient(option.WithBaseURL(Agora.Environments.Default))
+	generatedClient := client.NewClient(option.WithArea(option.AreaUS))
 	agoraClient := &agentkit.AgoraClient{
 		Agents:         generatedClient.Agents,
 		AppID:          appID,

@@ -3,7 +3,7 @@ module agent-quickstart-go/server-go
 go 1.23.0
 
 require (
-	github.com/AgoraIO-Conversational-AI/agent-server-sdk-go v1.3.2
+	github.com/AgoraIO-Conversational-AI/agent-server-sdk-go v1.3.4
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-gonic/gin v1.11.0
 	github.com/joho/godotenv v1.5.1

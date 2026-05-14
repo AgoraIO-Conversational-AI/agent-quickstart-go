@@ -2,13 +2,13 @@
 
 ## Overview
 
-`server-go` is the local backend path for token generation and Agora agent lifecycle management.
+`server` is the local backend path for token generation and Agora agent lifecycle management.
 
 Responsibilities:
 
 - Generate RTC + RTM tokens for the web client
 - Start and stop managed agent sessions with the Go SDK
-- Keep the local `/get_config`, `/v2/startAgent`, and `/v2/stopAgent` contract aligned with the Next route handlers
+- Keep the local `/get_config`, `/startAgent`, and `/stopAgent` contract aligned with the Next route handlers
 
 ## Stack
 
@@ -22,7 +22,7 @@ Responsibilities:
 ## File Layout
 
 ```text
-server-go/
+server/
 ├── agent.go        # Agent service, token generation, session map
 ├── main.go         # Gin router and HTTP handlers
 ├── go.mod
@@ -47,8 +47,8 @@ Agora Conversational AI APIs
 
 - `agentService` holds one SDK client and an in-memory map of started sessions.
 - `GET /get_config` creates a one-hour combined RTC + RTM token.
-- `POST /v2/startAgent` builds an Ada-configured agent and starts a session for one requesting user.
-- `POST /v2/stopAgent` stops the stored session when available, then falls back to stateless `StopAgent`.
+- `POST /startAgent` builds an Ada-configured agent and starts a session for one requesting user.
+- `POST /stopAgent` stops the stored session when available, then falls back to stateless `StopAgent`.
 
 ## Default Managed Pipeline
 
@@ -62,6 +62,6 @@ In local mode, Next route handlers proxy here through `AGENT_BACKEND_URL=http://
 
 ```text
 /api/get_config    -> /get_config
-/api/v2/startAgent -> /v2/startAgent
-/api/v2/stopAgent  -> /v2/stopAgent
+/api/startAgent -> /startAgent
+/api/stopAgent  -> /stopAgent
 ```

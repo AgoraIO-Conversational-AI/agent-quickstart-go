@@ -207,7 +207,7 @@ func TestAgentServiceStopSupportsIdempotentFallback(t *testing.T) {
 
 func TestStartAgentRouteValidation(t *testing.T) {
 	router := newRouter(&agentService{})
-	request := httptest.NewRequest(http.MethodPost, "/v2/startAgent", strings.NewReader(`{"channelName":"room"}`))
+	request := httptest.NewRequest(http.MethodPost, "/startAgent", strings.NewReader(`{"channelName":"room"}`))
 	request.Header.Set("Content-Type", "application/json")
 	response := httptest.NewRecorder()
 
@@ -228,7 +228,7 @@ func TestStartAgentRouteValidation(t *testing.T) {
 func TestStopAgentRouteValidation(t *testing.T) {
 	service := &agentService{stopClient: &fakeStopClient{}, sessions: map[string]sessionStopper{}}
 	router := newRouter(service)
-	request := httptest.NewRequest(http.MethodPost, "/v2/stopAgent", strings.NewReader(`{}`))
+	request := httptest.NewRequest(http.MethodPost, "/stopAgent", strings.NewReader(`{}`))
 	request.Header.Set("Content-Type", "application/json")
 	response := httptest.NewRecorder()
 

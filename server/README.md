@@ -15,7 +15,7 @@ make setup
 Agora credentials:
 
 ```bash
-agora project env write server-go/.env.local --with-secrets
+agora project env write server/.env.local --with-secrets
 ```
 
 Run the app:
@@ -31,10 +31,10 @@ This assumes the Agora CLI is installed and logged in. The command uses the proj
 If you are not using the Agora CLI, create the env file manually and fill in your project values:
 
 ```bash
-cp server-go/.env.example server-go/.env.local
+cp server/.env.example server/.env.local
 ```
 
-Backend-only workflow from `server-go/`:
+Backend-only workflow from `server/`:
 
 ```bash
 cp .env.example .env.local
@@ -45,7 +45,7 @@ go build -o ./bin/agent-quickstart-go .
 go run .
 ```
 
-Backend-only Agora CLI env write from `server-go/`:
+Backend-only Agora CLI env write from `server/`:
 
 ```bash
 agora project env write .env.local --with-secrets
@@ -82,7 +82,7 @@ To select a specific existing project before writing env values, run this from t
 
 ```bash
 agora project use <project-id-or-name>
-agora project env write server-go/.env.local --with-secrets
+agora project env write server/.env.local --with-secrets
 ```
 
 To create a new project instead of using your default project:
@@ -90,14 +90,14 @@ To create a new project instead of using your default project:
 ```bash
 agora project create my-first-voice-agent --feature rtc --feature convoai
 agora project use my-first-voice-agent
-agora project env write server-go/.env.local --with-secrets
+agora project env write server/.env.local --with-secrets
 ```
 
 ## API Endpoints
 
 - `GET /get_config`
-- `POST /v2/startAgent`
-- `POST /v2/stopAgent`
+- `POST /startAgent`
+- `POST /stopAgent`
 
 `/get_config` returns a one-hour combined RTC + RTM token. The backend uses the same managed provider chain as the web deployment path: Deepgram `nova-3`, OpenAI `gpt-4o-mini`, and MiniMax `speech_2_6_turbo`.
 
@@ -105,10 +105,10 @@ Manual checks:
 
 ```bash
 curl 'http://127.0.0.1:8000/get_config?uid=1234&channel=manual-check'
-curl -X POST 'http://127.0.0.1:8000/v2/startAgent' \
+curl -X POST 'http://127.0.0.1:8000/startAgent' \
   -H 'Content-Type: application/json' \
   -d '{"channelName":"manual-check","rtcUid":9999,"userUid":1234}'
-curl -X POST 'http://127.0.0.1:8000/v2/stopAgent' \
+curl -X POST 'http://127.0.0.1:8000/stopAgent' \
   -H 'Content-Type: application/json' \
   -d '{"agentId":"fake-agent-9999"}'
 ```

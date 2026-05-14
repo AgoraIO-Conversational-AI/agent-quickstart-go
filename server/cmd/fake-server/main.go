@@ -38,7 +38,7 @@ func main() {
 		})
 	})
 
-	router.POST("/v2/startAgent", func(c *gin.Context) {
+	startAgentHandler := func(c *gin.Context) {
 		var request startAgentRequest
 		if err := c.ShouldBindJSON(&request); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"detail": "Invalid request body"})
@@ -58,9 +58,10 @@ func main() {
 			},
 			"msg": "success",
 		})
-	})
+	}
+	router.POST("/startAgent", startAgentHandler)
 
-	router.POST("/v2/stopAgent", func(c *gin.Context) {
+	stopAgentHandler := func(c *gin.Context) {
 		var request stopAgentRequest
 		if err := c.ShouldBindJSON(&request); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"detail": "Invalid request body"})
@@ -72,7 +73,8 @@ func main() {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"code": 0, "msg": "success"})
-	})
+	}
+	router.POST("/stopAgent", stopAgentHandler)
 
 	port := os.Getenv("PORT")
 	if strings.TrimSpace(port) == "" {

@@ -77,7 +77,7 @@ func newRouter(service *agentService) *gin.Engine {
 		})
 	})
 
-	router.POST("/v2/startAgent", func(c *gin.Context) {
+	startAgentHandler := func(c *gin.Context) {
 		if service == nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"detail": "Service not properly configured. Please check environment variables."})
 			return
@@ -101,9 +101,10 @@ func newRouter(service *agentService) *gin.Engine {
 			"data": result,
 			"msg":  "success",
 		})
-	})
+	}
+	router.POST("/startAgent", startAgentHandler)
 
-	router.POST("/v2/stopAgent", func(c *gin.Context) {
+	stopAgentHandler := func(c *gin.Context) {
 		if service == nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"detail": "Service not properly configured. Please check environment variables."})
 			return
@@ -125,7 +126,8 @@ func newRouter(service *agentService) *gin.Engine {
 			"code": 0,
 			"msg":  "success",
 		})
-	})
+	}
+	router.POST("/stopAgent", stopAgentHandler)
 	return router
 }
 

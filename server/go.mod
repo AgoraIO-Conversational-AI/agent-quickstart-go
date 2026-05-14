@@ -1,4 +1,4 @@
-module agent-quickstart-go/server-go
+module agent-quickstart-go/server
 
 go 1.23.0
 

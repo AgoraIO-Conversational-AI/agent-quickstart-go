@@ -1,6 +1,6 @@
 # Go Backend Agent Guide
 
-Use this guide when changing files under `server-go/`.
+Use this guide when changing files under `server/`.
 
 ## Current Role
 
@@ -17,7 +17,7 @@ The deployed web app can also serve `/api/*` directly from Next route handlers, 
 
 ## Current Implementation Model
 
-- `main.go` exposes `/get_config`, `/v2/startAgent`, and `/v2/stopAgent`
+- `main.go` exposes `/get_config`, `/startAgent`, and `/stopAgent`
 - `agent.go` wraps the official Go Agent Server SDK
 - agent sessions are scoped to the requesting user with `remote_uids=[user_uid]`
 - stop is idempotent through a session stop first, then `client.stop_agent(...)` fallback
@@ -29,7 +29,7 @@ The deployed web app can also serve `/api/*` directly from Next route handlers, 
 Setup from the repo root:
 
 ```bash
-cp server-go/.env.example server-go/.env.local
+cp server/.env.example server/.env.local
 ```
 
 Required values:
@@ -66,7 +66,7 @@ make verify-local-go
 make verify-backend
 ```
 
-From `server-go/` directly:
+From `server/` directly:
 
 ```bash
 go mod tidy

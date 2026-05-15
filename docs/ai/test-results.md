@@ -34,7 +34,7 @@ All issues were addressed by editing the affected docs; retests confirmed each f
 
 | #   | Question                                                                | Answer Correct? | Files Read                                                                                          | Level Loaded     | Result |
 | --- | ----------------------------------------------------------------------- | --------------- | --------------------------------------------------------------------------------------------------- | ---------------- | ------ |
-| 5   | What's the boundary between `client/app/api` and `server/`? When do I add a route on either side? | Yes | `AGENTS.md`, `L1/03_code_map.md`, `L1/04_conventions.md`, `L1/07_gotchas.md`, `client/next.config.ts`, `server/api/router.go` | L0+L1 sufficient | Pass   |
+| 5   | What's the boundary between `client/app/api` and `server/`? When do I add a route on either side? | Yes | `AGENTS.md`, `L1/03_code_map.md`, `L1/04_conventions.md`, `L1/07_gotchas.md`, `client/next.config.ts`, `server/main.go` | L0+L1 sufficient | Pass   |
 | 6   | Where does the agent prompt / voice / VAD config live? How do I change it? | Yes (parity gap) | `L1/05_workflows.md`, `L1/06_interfaces.md`, `L2/managed_agent_config.md`, `server/agent/config.go`, `server/agent/builder.go`, `server/agent/handler.go` | L2 needed        | L2 gap → Pass |
 
 ### Development

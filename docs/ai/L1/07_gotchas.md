@@ -23,9 +23,7 @@
 ## README / Code Drift Around Deploy
 
 - The root `README.md` deploy section describes a "single-target" mode where `/api/*` is served in-process by Next. That mode does **not** exist in this client — there are no route handlers and `verify-api-contracts.ts` forbids them. Treat the deploy path as **rewrite-proxy** to a hosted Go service.
-- `client/ARCHITECTURE.md` still references Python/Vite/Zustand and a `useAgoraConnection.ts` hook. Neither exists in this repo. It is a stale doc.
-- `client/AGENTS.md` lists `src/hooks/useAgoraConnection.ts` in its Key Files. The directory and file are both absent — the hook's responsibilities are inlined in `LandingPage.tsx` and `ConversationComponent.tsx`.
-- `server/AGENTS.md` notes that Next can serve `/api/*` directly. That is technically true for an external Next app, but not for this client.
+- Per-module `AGENTS.md` / `ARCHITECTURE.md` under `client/` and `server/` were removed. Use repo-root `ARCHITECTURE.md`, `AGENTS.md`, and `docs/ai/L1/` instead of looking for copies next to each crate.
 
 ## StrictMode + RTC
 

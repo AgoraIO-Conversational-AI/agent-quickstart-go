@@ -51,8 +51,6 @@ client/                   # Next.js 16 web app
   biome.json
   next.config.ts          # rewrites() (see 02_architecture)
   tsconfig.json
-  ARCHITECTURE.md         # Module-level architecture (partially stale)
-  AGENTS.md               # Client agent guide
   docs/                   # Workflow + review + project state templates
 
 server/                   # Go (Gin) backend
@@ -65,8 +63,6 @@ server/                   # Go (Gin) backend
     main.go               # Fake /get_config/startAgent/stopAgent for smoke tests
   .env.example            # AGORA_APP_ID, AGORA_APP_CERTIFICATE, AGENT_GREETING, PORT
   README.md
-  ARCHITECTURE.md
-  AGENTS.md
 ```
 
 ## Core Files Table
@@ -92,11 +88,11 @@ server/                   # Go (Gin) backend
 - `client/` owns React UI, RTC/RTM lifecycle, and the proxy contract to the backend.
 - `server/` owns Gin handlers and all Agora SDK calls; secrets never leave this process.
 - `client/scripts/` owns verification harnesses that gate `make verify*`.
-- Module-level `AGENTS.md` exists in `client/` and `server/` for narrower task guidance.
+- Module-specific `AGENTS.md` / `ARCHITECTURE.md` under `client/` and `server/` were removed — use repo-root `ARCHITECTURE.md`, `AGENTS.md`, and this L1 tree.
 
 ## What's Not in the Repo
 
-- **No `client/src/hooks/`** and **no `useAgoraConnection.ts`** — `client/AGENTS.md` and `client/ARCHITECTURE.md` still reference it; treat those references as stale until the doc is updated.
+- **No `client/src/hooks/`** and **no `useAgoraConnection.ts`** — RTC/RTM orchestration lives in `LandingPage.tsx` and `ConversationComponent.tsx`.
 - **No `client/README.md`** in the current tree.
 - **No `*_test.ts`** in the client; verification is via the three Node-based scripts above.
 - **No `app/api/**/route.ts`** — `verify-api-contracts.ts` enforces this.

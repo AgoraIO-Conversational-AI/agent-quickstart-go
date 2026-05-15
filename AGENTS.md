@@ -7,14 +7,14 @@ This guide is for coding agents making changes in `agent-quickstart-go`.
 - Read [README.md](./README.md) for setup, supported run modes, and verification.
 - Use [ARCHITECTURE.md](./ARCHITECTURE.md) for system-level request flow.
 - Use module guides only when working inside that module:
-  - [web-client/AGENTS.md](./web-client/AGENTS.md)
-  - [server-go/AGENTS.md](./server-go/AGENTS.md)
+  - [client/AGENTS.md](./client/AGENTS.md)
+  - [server/AGENTS.md](./server/AGENTS.md)
 
 ## Current System Shape
 
 - Frontend: Next.js 16, React 19, TypeScript, `agora-rtc-react`, `agora-rtm`, `agora-agent-client-toolkit`, `agora-agent-uikit`
-- Local backend: Go + Gin in `server-go`
-- Deployed web backend: Next route handlers in `web-client/app/api`
+- Local backend: Go + Gin in `server`
+- Deployed web backend: Next route handlers in `client/app/api`
 - Auth: Token007 generated from `AGORA_APP_ID` and `AGORA_APP_CERTIFICATE`
 - Default agent config: managed Deepgram STT, OpenAI LLM, and MiniMax TTS
 
@@ -28,31 +28,31 @@ This guide is for coding agents making changes in `agent-quickstart-go`.
 
 ### Single-Target Web Deployment
 
-- Deploy `web-client` as a Next.js app
-- `/api/get_config`, `/api/v2/startAgent`, and `/api/v2/stopAgent` run inside the Next app
+- Deploy `client` as a Next.js app
+- `/api/get_config`, `/api/startAgent`, and `/api/stopAgent` run inside the Next app
 - Do not assume a separate backend service exists in this mode
 
 ## Routing Ownership
 
-- UI and RTC/RTM client lifecycle live in `web-client`
-- `/api/*` entrypoints for the web app live in `web-client/app/api`
-- Go agent lifecycle logic lives in `server-go`
+- UI and RTC/RTM client lifecycle live in `client`
+- `/api/*` entrypoints for the web app live in `client/app/api`
+- Go agent lifecycle logic lives in `server`
 - For deployability changes, update both the README and architecture docs if the owner of `/api/*` changes
 
 ## Key Files
 
 - `README.md`: setup, local vs deploy modes, troubleshooting, verification
 - `ARCHITECTURE.md`: top-level environment model
-- `web-client/src/components/app.tsx`: conversation UI shell
-- `web-client/src/hooks/useAgoraConnection.ts`: RTC, RTM, transcript, and token renewal lifecycle
-- `web-client/src/lib/server/agora.ts`: shared server-side token and agent helpers for Next route handlers
-- `server-go/main.go`: Gin entrypoints
-- `server-go/agent.go`: Agora agent lifecycle wrapper
+- `client/src/components/app.tsx`: conversation UI shell
+- `client/src/hooks/useAgoraConnection.ts`: RTC, RTM, transcript, and token renewal lifecycle
+- `client/src/lib/server/agora.ts`: shared server-side token and agent helpers for Next route handlers
+- `server/main.go`: Gin entrypoints
+- `server/agent.go`: Agora agent lifecycle wrapper
 
 ## Working Rules
 
 - Prefer the smallest change that keeps local mode and deployed mode aligned.
-- Do not reintroduce `web-client/proxy.ts`; the current proxy fallback is route-local through `AGENT_BACKEND_URL`.
+- Do not reintroduce `client/proxy.ts`; the current proxy fallback is route-local through `AGENT_BACKEND_URL`.
 - Do not assume Zustand or a separate client-side store exists.
 - Do not require third-party vendor API keys unless the code actually introduces a non-managed path.
 - Keep token expiry and renewal behavior aligned across the Go backend and Next route handlers.

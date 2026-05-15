@@ -16,8 +16,8 @@ Gin service on :8000
 Agora Cloud Services
 ```
 
-- `web-client` owns the browser UI and the web-facing routes
-- `server-go` owns token generation and agent lifecycle for local development
+- `client` owns the browser UI and the web-facing routes
+- `server` owns token generation and agent lifecycle for local development
 - `make dev` starts both services together
 
 ## Single-Target Web Deployment
@@ -32,23 +32,23 @@ Next.js app
 Agora Cloud Services
 ```
 
-- `web-client` handles both UI and API
-- `server-go` is optional unless you want an external backend
+- `client` handles both UI and API
+- `server` is optional unless you want an external backend
 
 ## Shared Flow
 
 1. `GET /api/get_config` returns app ID, token, channel, user UID, and agent UID.
-2. `POST /api/v2/startAgent` creates a managed agent session scoped to the requesting user.
+2. `POST /api/startAgent` creates a managed agent session scoped to the requesting user.
 3. The agent joins RTC, publishes audio, and emits transcript events over RTM.
-4. `POST /api/v2/stopAgent` stops the in-memory session or falls back to stateless stop by agent ID.
+4. `POST /api/stopAgent` stops the in-memory session or falls back to stateless stop by agent ID.
 
 ## API Contract
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/get_config` | GET | Generate RTC + RTM config |
-| `/v2/startAgent` | POST | Start an agent session |
-| `/v2/stopAgent` | POST | Stop an agent session |
+| `/startAgent` | POST | Start an agent session |
+| `/stopAgent` | POST | Stop an agent session |
 
 The frontend always calls `/api/*`. In local mode those handlers proxy to `AGENT_BACKEND_URL`; in deployment they execute directly in the Next app.
 
@@ -58,6 +58,6 @@ The Go backend uses app credentials mode with the official Agora Agent Server SD
 
 ## References
 
-- [web-client/ARCHITECTURE.md](./web-client/ARCHITECTURE.md)
-- [server-go/ARCHITECTURE.md](./server-go/ARCHITECTURE.md)
+- [client/ARCHITECTURE.md](./client/ARCHITECTURE.md)
+- [server/ARCHITECTURE.md](./server/ARCHITECTURE.md)
 - [README.md](./README.md)

@@ -64,8 +64,8 @@ If `AGENT_BACKEND_URL` is unset/empty, **no rewrites register** — the client c
 `server/agent.go`:
 
 - `agentService` holds the `agentkit.AgoraClient` built with `option.WithArea(option.AreaUS)` and `AuthModeAppCredentials`.
-- `generateConfig(channel, uid)` calls `agentkit.GenerateConvoAIToken` with `ExpiresInHours(1)`.
-- `start(...)` constructs `agentkit.NewAgent(...)` with OpenAI / Deepgram / MiniMax vendors, `WithTurnDetectionConfig`, and session options, then `agent.CreateSession(...)` + `session.Start(ctx)`.
+- `generateConfig(channel, uid)` treats missing, zero, and negative UIDs as "generate a usable UID", then calls `agentkit.GenerateConvoAIToken` with `ExpiresInHours(1)`.
+- `start(...)` constructs `agentkit.NewAgent(...)` with OpenAI / Deepgram / MiniMax vendors, `WithTurnDetectionConfig`, server-side RTM/error parameters, then `agent.CreateSession(...)` + `session.Start(ctx)`.
 - `stop(agentId)` ends the session via the SDK.
 
 ## Managed Agent Defaults (server/agent.go)
@@ -77,7 +77,7 @@ If `AGENT_BACKEND_URL` is unset/empty, **no rewrites register** — the client c
 | TTS   | `MiniMaxTTS` | `model: "speech_2_6_turbo"`, `voiceId: "English_captivating_female1"` |
 | VAD   | Agora        | `SpeechThreshold: 0.5`, start mode `vad`, `InterruptDurationMs: 160`, `PrefixPaddingMs: 300`, end mode `vad`, `SilenceDurationMs: 480` |
 
-Session: `IdleTimeout: 30`, `ExpiresIn: ExpiresInHours(1)`, `EnableStringUID: false`, `DataChannel: "rtm"`, `EnableRtm: true`, `EnableTools: true`, `EnableErrorMessage: true`.
+Agent parameters: `DataChannel: "rtm"`, `EnableErrorMessage: true`. Advanced features: `EnableRtm: true`, `EnableTools: true`. Session options: `IdleTimeout: 30`, `ExpiresIn: ExpiresInHours(1)`, `EnableStringUID: false`.
 
 ## Why This Shape
 

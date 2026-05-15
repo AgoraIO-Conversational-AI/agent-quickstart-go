@@ -14,7 +14,7 @@
 
 All routes go through `cors.New(...)` with `AllowAllOrigins: true` and methods `GET`/`POST`/`OPTIONS`.
 
-`generateConfig` treats `uid <= 0` as "generate a random user UID" and returns the generated value in the response.
+`generateConfig` treats missing, zero, and negative UIDs as "generate a random user UID" and returns the generated value. This keeps the single RTC+RTM token usable for RTM, where `0` is not a valid login subject.
 
 ## Next.js Rewrites
 
@@ -66,18 +66,27 @@ agent := agentkit.NewAgent(/* options */).
     WithTts(vendors.NewMiniMaxTTS(...)).
     WithTurnDetectionConfig(/* VAD */)
 
-session, err := agent.CreateSession(ctx, agentkit.CreateSessionOptions{
-    ChannelName:        req.ChannelName,
-    RemoteUids:         []string{strconv.Itoa(req.UserUid)},
-    IdleTimeout:        30,
-    ExpiresIn:          agentkit.ExpiresInHours(1),
-    EnableStringUID:    false,
-    DataChannel:        "rtm",
-    EnableRtm:          true,
-    EnableTools:        true,
-    EnableErrorMessage: true,
+agent := agentkit.NewAgent(
+    /* prompt, VAD, greeting, vendors */
+    agentkit.WithAdvancedFeatures(&agentkit.AdvancedFeatures{
+        EnableRtm:   &enableRTM,
+        EnableTools: &enableTools,
+    }),
+    agentkit.WithParameters(&agentkit.SessionParams{
+        DataChannel:        &dataChannel,        // "rtm"
+        EnableErrorMessage: &enableErrorMessage, // true
+    }),
+)
+
+session := agent.CreateSession(s.sessionClient, agentkit.CreateSessionOptions{
+    Channel:         channelName,
+    AgentUID:        strconv.Itoa(agentUID),
+    RemoteUIDs:      []string{strconv.Itoa(userUID)},
+    EnableStringUID: &enableStringUID,
+    IdleTimeout:     &idleTimeout,
+    ExpiresIn:       expiresIn,
 })
-err = session.Start(ctx)
+agentID, err := session.Start(ctx)
 ```
 
 ## RTM Event Shapes (Client-Side)

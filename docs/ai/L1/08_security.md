@@ -22,7 +22,7 @@ Mark `AGORA_APP_CERTIFICATE` as secret in whichever deploy host runs the Go serv
 ## Token Issuance
 
 - `agentService.generateConfig` calls `agentkit.GenerateConvoAIToken(GenerateConvoAITokenOptions{..., TokenExpire: ExpiresInHours(1)})`.
-- The same token grants RTC and RTM privileges.
+- The same token grants RTC and RTM privileges; `uid <= 0` is replaced with a generated UID before minting so RTM can log in with the token subject.
 - Sessions also carry `ExpiresIn: ExpiresInHours(1)` in `CreateSessionOptions`, so an idle session aligns with token expiry.
 
 ## Token Renewal

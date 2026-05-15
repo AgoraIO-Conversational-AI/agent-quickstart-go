@@ -25,7 +25,8 @@ Edit `server/agent.go`:
 - **LLM:** change `vendors.NewOpenAI(...)` arguments.
 - **STT:** change `vendors.NewDeepgramSTT(...)`.
 - **TTS:** change `vendors.NewMiniMaxTTS(...)` (`Model`, `VoiceID`).
-- **Session:** edit `agentkit.CreateSessionOptions{...}` fields like `IdleTimeout`, `ExpiresIn`, `DataChannel`.
+- **Agent parameters:** edit `agentkit.WithParameters(...)` / `WithAdvancedFeatures(...)` for server-side RTM data channel, error messages, and tool flags.
+- **Session:** edit `agentkit.CreateSessionOptions{...}` fields like `IdleTimeout`, `ExpiresIn`, and `EnableStringUID`.
 
 After editing, run `make fmt` and `make verify-backend`.
 
@@ -62,7 +63,7 @@ make dev
 
 ## Token Renewal
 
-The browser receives `token-privilege-will-expire` from RTC and calls `getConfig()` twice — once with the RTC `client.uid`, once with the stored `agoraData.uid`. The Go backend re-issues two tokens via `agentkit.GenerateConvoAIToken`. If you change UID handling on either side, walk the renewal path end-to-end before merging.
+The browser receives `token-privilege-will-expire` from RTC and calls `getConfig()` twice — once with the RTC `client.uid`, once with the stored `agoraData.uid`. The Go backend re-issues RTM-capable RTC tokens via `agentkit.GenerateConvoAIToken`. If a request passes `uid=0`, the backend generates a non-zero UID because Agora RTC treats `0` as auto-assign but RTM token subjects cannot use `0`.
 
 ## Update Module Guides After Behavior Changes
 

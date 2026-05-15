@@ -35,19 +35,19 @@ All issues were addressed by editing the affected docs; retests confirmed each f
 | #   | Question                                                                | Answer Correct? | Files Read                                                                                          | Level Loaded     | Result |
 | --- | ----------------------------------------------------------------------- | --------------- | --------------------------------------------------------------------------------------------------- | ---------------- | ------ |
 | 5   | What's the boundary between `client/app/api` and `server/`? When do I add a route on either side? | Yes | `AGENTS.md`, `L1/03_code_map.md`, `L1/04_conventions.md`, `L1/07_gotchas.md`, `client/next.config.ts`, `server/main.go` | L0+L1 sufficient | Pass   |
-| 6   | Where does the agent prompt / voice / VAD config live? How do I change it? | Yes (parity gap) | `L1/05_workflows.md`, `L1/06_interfaces.md`, `L2/managed_agent_config.md`, `server/agent/config.go`, `server/agent/builder.go`, `server/agent/handler.go` | L2 needed        | L2 gap → Pass |
+| 6   | Where does the agent prompt / voice / VAD config live? How do I change it? | Yes (parity gap) | `L1/05_workflows.md`, `L1/06_interfaces.md`, `L2/managed_agent_config.md`, `server/agent.go` | L2 needed        | L2 gap → Pass |
 
 ### Development
 
 | #   | Question                                                                | Answer Correct? | Files Read                                                                                          | Level Loaded     | Result |
 | --- | ----------------------------------------------------------------------- | --------------- | --------------------------------------------------------------------------------------------------- | ---------------- | ------ |
-| 7   | How would I add a new `/api/foo` endpoint end-to-end (server + client)? | Yes             | `L1/05_workflows.md`, `L1/06_interfaces.md`, `L1/04_conventions.md`, `server/api/router.go`         | L0+L1 sufficient | Pass   |
+| 7   | How would I add a new `/api/foo` endpoint end-to-end (server + client)? | Yes             | `L1/05_workflows.md`, `L1/06_interfaces.md`, `L1/04_conventions.md`, `server/main.go`         | L0+L1 sufficient | Pass   |
 
 ### Deep Dive
 
 | #   | Question                                                                | Answer Correct? | Files Read                                                                                          | Level Loaded     | Result |
 | --- | ----------------------------------------------------------------------- | --------------- | --------------------------------------------------------------------------------------------------- | ---------------- | ------ |
-| 8   | Why does the client run RTM with `uid="0"` while the agent uses a string UID, and how does renewal stay consistent? | Yes | `L1/07_gotchas.md`, `L2/session_lifecycle.md`, `L2/managed_agent_config.md`, `client/components/ConversationComponent.tsx`, `server/agent/handler.go` | L2 needed        | Pass   |
+| 8   | Why does the client replace `uid=0` before RTM login, and how does renewal stay consistent? | Yes | `L1/07_gotchas.md`, `L2/session_lifecycle.md`, `L2/managed_agent_config.md`, `client/src/components/ConversationComponent.tsx`, `server/agent.go` | L2 needed        | Pass   |
 
 ## Recommended Fixes (Applied)
 
@@ -62,5 +62,5 @@ Retested: 2026-05-15
 | Finding                                                  | Source checked                                                                                          | Docs changed                              | Result | Notes |
 | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ------ | ----- |
 | `make verify-local` scope                                | `Makefile`, `client/package.json`                                                                       | `L1/05_workflows.md`                       | Pass   | Aggregated steps + exclusions now stated. |
-| Managed agent config parity note                         | `server/agent/config.go`, `agent-quickstart-python/server/src/agent.py`                                  | `L2/managed_agent_config.md`               | Pass   | Cross-quickstart fields enumerated. |
+| Managed agent config parity note                         | `server/agent.go`, `agent-quickstart-python/server/src/agent.py`                                  | `L2/managed_agent_config.md`               | Pass   | Cross-quickstart fields enumerated. |
 | L2 verification_scripts summary row drift                | `client/scripts/verify-local-proxy.ts`, `client/next.config.ts`                                          | `L2/verification_scripts.md`               | Pass   | Summary table row now matches dedicated description. |

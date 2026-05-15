@@ -1,0 +1,111 @@
+# 06 Interfaces
+
+> Boundary contracts: Gin routes, Next rewrites, environment variables, and managed agent payload.
+
+## Go Backend Routes
+
+`server/main.go` registers these on a Gin router:
+
+| Path           | Method | Request                                                         | Success (200)                                                                                | Errors                                                  |
+| -------------- | ------ | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `/get_config`  | GET    | Query: optional `channel`, optional `uid`                       | `{ "code": 0, "msg": "success", "data": { app_id, token, uid, channel_name, agent_uid } }`   | `400` invalid uid; `500` `service == nil`; `toHTTPError` |
+| `/startAgent`  | POST   | JSON `{ channelName, rtcUid, userUid }` (`startAgentRequest`)   | `{ "code": 0, "msg": "success", "data": { agent_id, channel_name, status } }`                | `400` invalid JSON; `500` service errors                |
+| `/stopAgent`   | POST   | JSON `{ agentId }` (`stopAgentRequest`)                          | `{ "code": 0, "msg": "success" }`                                                            | `400` invalid JSON; `500` service errors                |
+
+All routes go through `cors.New(...)` with `AllowAllOrigins: true` and methods `GET`/`POST`/`OPTIONS`.
+
+`generateConfig` treats `uid <= 0` as "generate a random user UID" and returns the generated value in the response.
+
+## Next.js Rewrites
+
+`client/next.config.ts` registers these only when `AGENT_BACKEND_URL` is set:
+
+| Source              | Destination                                  |
+| ------------------- | -------------------------------------------- |
+| `/api/get_config`   | `${AGENT_BACKEND_URL}/get_config`             |
+| `/api/startAgent`   | `${AGENT_BACKEND_URL}/startAgent`             |
+| `/api/stopAgent`    | `${AGENT_BACKEND_URL}/stopAgent`              |
+
+`verify-api-contracts.ts` asserts that no `client/app/api/**/route.ts` files exist. Adding one would create a competing handler in front of the rewrite — don't.
+
+## Environment Variables
+
+| Scope                | Variable                                  |
+| -------------------- | ----------------------------------------- |
+| Go server (required) | `AGORA_APP_ID`, `AGORA_APP_CERTIFICATE`   |
+| Go server (optional) | `AGENT_GREETING`, `PORT`                  |
+| Next build           | `AGENT_BACKEND_URL`                       |
+| Browser              | `NEXT_PUBLIC_AGENT_UID` (optional override) |
+
+`AGENT_BACKEND_URL` is a Next **server**-time env var (used inside `next.config.ts`), not a `NEXT_PUBLIC_*` value — do not prefix it.
+
+## Token Shape
+
+`generateConfig` returns:
+
+```json
+{
+  "app_id": "string",
+  "token": "string",                // built by agentkit.GenerateConvoAIToken
+  "uid": "string",                  // serialized number
+  "channel_name": "string",
+  "agent_uid": "string"
+}
+```
+
+Token expiry is `agentkit.ExpiresInHours(1)`. The same token grants RTC and RTM privileges.
+
+## Managed Agent Payload
+
+The Go server does not POST a hand-written JSON payload to Agora — it uses the SDK builder chain in `server/agent.go`:
+
+```go
+agent := agentkit.NewAgent(/* options */).
+    WithLlm(vendors.NewOpenAI(...)).
+    WithStt(vendors.NewDeepgramSTT(...)).
+    WithTts(vendors.NewMiniMaxTTS(...)).
+    WithTurnDetectionConfig(/* VAD */)
+
+session, err := agent.CreateSession(ctx, agentkit.CreateSessionOptions{
+    ChannelName:        req.ChannelName,
+    RemoteUids:         []string{strconv.Itoa(req.UserUid)},
+    IdleTimeout:        30,
+    ExpiresIn:          agentkit.ExpiresInHours(1),
+    EnableStringUID:    false,
+    DataChannel:        "rtm",
+    EnableRtm:          true,
+    EnableTools:        true,
+    EnableErrorMessage: true,
+})
+err = session.Start(ctx)
+```
+
+## RTM Event Shapes (Client-Side)
+
+`AgoraVoiceAI` emits the same toolkit events as the Next.js quickstart:
+
+- `TRANSCRIPT_UPDATED` — `{ uid, text, status, timestamp }[]`
+- `AGENT_STATE_CHANGED` — `AgentState`
+- `AGENT_METRICS` — `{ type, name, value, timestamp }`
+- `MESSAGE_ERROR` — `{ module, code, message, send_ts }`
+- `MESSAGE_SAL_STATUS` — `{ status, timestamp }`
+- `AGENT_ERROR` — SDK error info
+
+`ConversationComponent.tsx` also attaches a raw RTM `message` listener as a fallback for the same `message.error` / `message.sal_status` JSON payloads.
+
+## Internal Types
+
+| Type                          | Lives in                                       | Notes                                            |
+| ----------------------------- | ---------------------------------------------- | ------------------------------------------------ |
+| `startAgentRequest`           | `server/agent.go`                              | `channelName`, `rtcUid`, `userUid`               |
+| `stopAgentRequest`            | `server/agent.go`                              | `agentId`                                        |
+| `configData`                  | `server/agent.go`                              | snake_case JSON tags                              |
+| `startAgentResult`            | `server/agent.go`                              | `agent_id`, `channel_name`, `status`             |
+| `AgoraTokenData`              | `client/src/types/conversation.ts`             | Used by `LandingPage` + `ConversationComponent`  |
+| `AgoraRenewalTokens`          | `client/src/types/conversation.ts`             | Renewal handler payload                          |
+| `ConversationComponentProps`  | `client/src/types/conversation.ts`             | Includes RTM client + data                        |
+
+## Related Deep Dives
+
+- [Managed Agent Config](L2/managed_agent_config.md) — Detailed field reference.
+- [Verification Scripts](L2/verification_scripts.md) — How the contracts above are enforced in CI.

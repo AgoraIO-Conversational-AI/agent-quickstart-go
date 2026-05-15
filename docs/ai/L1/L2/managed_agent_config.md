@@ -8,30 +8,50 @@ All managed agent configuration is in `server/agent.go`. The browser sends `{ ch
 
 ## The Agent Builder Chain
 
+`agentkit.NewAgent` takes functional options — not method chaining. `AdvancedFeatures` and `Parameters` (including `DataChannel`, `EnableErrorMessage`, `EnableRtm`, `EnableTools`) are options on the agent, not on the session.
+
 ```go
-agent := agentkit.NewAgent().
-    WithInstructions(adaPrompt).
-    WithGreeting(firstNonEmpty(os.Getenv("AGENT_GREETING"), defaultGreeting)).
-    WithFailureMessage(defaultFailureMessage).
-    WithMaxHistory(15).
-    WithTurnDetectionConfig(agentkit.TurnDetectionConfig{
-        SpeechThreshold:    float64Ptr(0.5),
-        StartMode:          "vad",
-        InterruptDurationMs: intPtr(160),
-        PrefixPaddingMs:    intPtr(300),
-        EndMode:            "vad",
-        SilenceDurationMs:  intPtr(480),
-    }).
-    WithAdvancedFeatures(map[string]any{
-        "enable_rtm":   true,
-        "enable_tools": true,
-    }).
+agent := agentkit.NewAgent(
+    agentkit.WithName(fmt.Sprintf("agent_%s_%d_%d", channelName, agentUID, time.Now().Unix())),
+    agentkit.WithInstructions(adaPrompt),
+    agentkit.WithGreeting(s.greeting),
+    agentkit.WithFailureMessage("Please wait a moment."),
+    agentkit.WithMaxHistory(50),
+    agentkit.WithTurnDetectionConfig(&agentkit.TurnDetectionConfig{
+        Config: &agentkit.TurnDetectionNestedConfig{
+            SpeechThreshold: float64Ptr(0.5),
+            StartOfSpeech: &agentkit.StartOfSpeechConfig{
+                Mode: agentkit.StartOfSpeechMode("vad"),
+                VadConfig: &agentkit.StartOfSpeechVadConfig{
+                    InterruptDurationMs: intPtr(160),
+                    PrefixPaddingMs:     intPtr(300),
+                },
+            },
+            EndOfSpeech: &agentkit.EndOfSpeechConfig{
+                Mode: &endOfSpeechMode,   // agentkit.EndOfSpeechMode("vad")
+                VadConfig: &agentkit.EndOfSpeechVadConfig{
+                    SilenceDurationMs: intPtr(480),
+                },
+            },
+        },
+    }),
+    agentkit.WithAdvancedFeatures(&agentkit.AdvancedFeatures{
+        EnableRtm:   &enableRTM,    // true
+        EnableTools: &enableTools,  // true
+    }),
+    agentkit.WithParameters(&agentkit.SessionParams{
+        DataChannel:        &dataChannel,        // "rtm"
+        EnableErrorMessage: &enableErrorMessage, // true
+    }),
+).
     WithLlm(vendors.NewOpenAI(vendors.OpenAIOptions{
-        Model:       "gpt-4o-mini",
-        MaxHistory:  intPtr(15),
-        MaxTokens:   intPtr(1024),
-        Temperature: float64Ptr(0.7),
-        TopP:        float64Ptr(0.95),
+        Model:           "gpt-4o-mini",
+        GreetingMessage: s.greeting,
+        FailureMessage:  "Please wait a moment.",
+        MaxHistory:      intPtr(15),
+        MaxTokens:       intPtr(1024),
+        Temperature:     float64Ptr(0.7),
+        TopP:            float64Ptr(0.95),
     })).
     WithStt(vendors.NewDeepgramSTT(vendors.DeepgramSTTOptions{
         Model:    "nova-3",
@@ -43,35 +63,35 @@ agent := agentkit.NewAgent().
     }))
 ```
 
-The exact field names match `agora-agent-server-sdk-go` v1.3.4. If you bump the SDK, re-check field names — some options moved between minor versions.
+The exact field names match `agora-agent-server-sdk-go`. If you bump the SDK, re-check field names — some options moved between minor versions.
 
 ## Session Options
 
+`CreateSession` takes the `AgoraClient` as its first argument, then the session options struct. `session.Start(ctx)` is called separately and returns the `agentID`.
+
 ```go
-session, err := agent.CreateSession(ctx, agentkit.CreateSessionOptions{
-    ChannelName:        req.ChannelName,
-    RemoteUids:         []string{strconv.Itoa(req.UserUid)},
-    IdleTimeout:        30,
-    ExpiresIn:          agentkit.ExpiresInHours(1),
-    EnableStringUID:    false,
-    DataChannel:        "rtm",
-    EnableRtm:          true,
-    EnableTools:        true,
-    EnableErrorMessage: true,
+session := agent.CreateSession(s.sessionClient, agentkit.CreateSessionOptions{
+    Channel:         channelName,
+    AgentUID:        strconv.Itoa(agentUID),
+    RemoteUIDs:      []string{strconv.Itoa(userUID)},
+    EnableStringUID: &enableStringUID,  // false
+    IdleTimeout:     &idleTimeout,      // 30
+    ExpiresIn:       expiresIn,
 })
-err = session.Start(ctx)
+
+agentID, err := session.Start(ctx)
 ```
 
-| Option              | Effect                                                                                        |
-| ------------------- | --------------------------------------------------------------------------------------------- |
-| `RemoteUids`        | Restricts the agent to the requester's UID; prevents cross-channel sniping.                   |
-| `IdleTimeout`       | Seconds of silence before the session ends.                                                   |
-| `ExpiresIn`         | Hard ceiling, mirrors the 1-hour token.                                                       |
-| `EnableStringUID`   | `false` — keeps UIDs numeric for both RTC and RTM.                                            |
-| `DataChannel`       | `"rtm"` — transcripts and metrics flow over RTM.                                              |
-| `EnableRtm`         | Must remain `true` so the client receives transcript / state / metric events.                 |
-| `EnableTools`       | Toggles tool-calling support on the LLM.                                                      |
-| `EnableErrorMessage`| Surfaces `message.error` payloads on RTM for the client to render.                            |
+| Option            | Effect                                                                      |
+| ----------------- | --------------------------------------------------------------------------- |
+| `Channel`         | The RTC channel the agent joins.                                            |
+| `AgentUID`        | UID the agent occupies; must match `AGENT_UID` in the web client.           |
+| `RemoteUIDs`      | Restricts the agent to the requester's UID; prevents cross-channel sniping. |
+| `EnableStringUID` | `false` keeps UIDs numeric for both RTC and RTM.                            |
+| `IdleTimeout`     | Seconds of silence before the session ends.                                 |
+| `ExpiresIn`       | Hard ceiling on session length, mirrors the 1-hour token.                   |
+
+`DataChannel`, `EnableRtm`, `EnableTools`, and `EnableErrorMessage` are **not** session options — they live on the agent via `agentkit.WithAdvancedFeatures` and `agentkit.WithParameters`.
 
 ## Editing Each Surface
 
@@ -85,12 +105,12 @@ Set `AGENT_GREETING` in `server/.env.local`, or edit the fallback default in `ne
 
 ### Change VAD
 
-Edit `TurnDetectionConfig`. Tuning notes:
+Edit the `TurnDetectionConfig` passed to `agentkit.WithTurnDetectionConfig`. The struct uses a `Config` wrapper field with nested `StartOfSpeech` and `EndOfSpeech` sub-structs — do **not** use a flat struct shape. Tuning notes:
 
-- `SpeechThreshold` — VAD activation sensitivity (0.0–1.0). Lower values trigger on quieter audio.
-- `InterruptDurationMs` — minimum user speech before the agent yields. Lower = more responsive interruptions.
-- `PrefixPaddingMs` — audio captured before VAD triggers; raise this if early phonemes are clipped.
-- `SilenceDurationMs` — silence after speech before VAD ends the turn. Raise this for slow speakers.
+- `SpeechThreshold` (on `TurnDetectionNestedConfig`) — VAD activation sensitivity (0.0–1.0). Lower values trigger on quieter audio.
+- `InterruptDurationMs` (on `StartOfSpeechVadConfig`) — minimum user speech before the agent yields. Lower = more responsive interruptions.
+- `PrefixPaddingMs` (on `StartOfSpeechVadConfig`) — audio captured before VAD triggers; raise this if early phonemes are clipped.
+- `SilenceDurationMs` (on `EndOfSpeechVadConfig`) — silence after speech before VAD ends the turn. Raise this for slow speakers.
 
 ### Swap STT / LLM / TTS
 
@@ -98,8 +118,9 @@ Replace the corresponding `vendors.New*` constructor. The SDK exposes alternativ
 
 ### Session-Level Tuning
 
-- Lower `IdleTimeout` (e.g. 15) for short demos.
-- Switch `DataChannel` to `"sct"` only if you are not relying on RTM transcripts.
+- Lower `IdleTimeout` (e.g. 15) for short demos. It is a pointer field (`&idleTimeout`).
+- `DataChannel` is set via `agentkit.WithParameters(&agentkit.SessionParams{DataChannel: ...})` on the agent, not in `CreateSessionOptions`. Switch to `"sct"` only if you are not relying on RTM transcripts.
+- `enable_metrics` is not exposed in the current Go SDK's `SessionParams` — metrics arrive automatically when `DataChannel` is `"rtm"` and the managed service supports them.
 
 ## Response Contract
 
@@ -112,12 +133,14 @@ Replace the corresponding `vendors.New*` constructor. The SDK exposes alternativ
   "data": {
     "agent_id": "string",
     "channel_name": "string",
-    "status": "running"
+    "status": "started"
   }
 }
 ```
 
 The client stores `agent_id` in `agoraData` and later passes it to `/api/stopAgent`.
+
+Stop is idempotent: `agentService.stop` tries `session.Stop(ctx)` on the in-memory session first (mutex-protected), then falls back to `stopClient.StopAgent(ctx, agentID)`. A 404 from `StopAgent` resolves without error.
 
 ## Verification
 
@@ -135,9 +158,9 @@ After editing `agent.go`, run `make fmt && make verify-backend`.
 | ---------------------------------------------------- | ---------------------------------------------------------------------- |
 | `500 Agora credentials are not set`                  | Missing `AGORA_APP_ID` / `AGORA_APP_CERTIFICATE` in `server/.env.local`. |
 | Agent joins but never speaks                         | TTS vendor key missing or wrong `VoiceID`.                              |
-| Agent state stuck in `IDLE`                          | `EnableRtm: false` or RTM client subscribed before login completed.     |
-| Transcript fragments arrive but no metrics           | `parameters.enable_metrics` not enabled (must remain in advanced features). |
-| Build fails: `unknown field "WithAdvancedFeatures"`  | SDK version mismatch; check `server/go.mod` against the import.         |
+| Agent state stuck in `IDLE`                          | `EnableRtm` is `false` in `WithAdvancedFeatures`, or RTM subscribed before login. |
+| Metrics events missing                               | `enable_metrics` is not in Go `SessionParams`; metrics flow automatically when `DataChannel` is `"rtm"`. |
+| Build fails: `unknown field`                         | SDK version mismatch; run `go mod tidy` and check `server/go.mod`.      |
 
 ## Parity With the Python Quickstart
 

@@ -60,14 +60,8 @@ Token expiry is `agentkit.ExpiresInHours(1)`. The same token grants RTC and RTM 
 The Go server does not POST a hand-written JSON payload to Agora — it uses the SDK builder chain in `server/agent.go`:
 
 ```go
-agent := agentkit.NewAgent(/* options */).
-    WithLlm(vendors.NewOpenAI(...)).
-    WithStt(vendors.NewDeepgramSTT(...)).
-    WithTts(vendors.NewMiniMaxTTS(...)).
-    WithTurnDetectionConfig(/* VAD */)
-
 agent := agentkit.NewAgent(
-    /* prompt, VAD, greeting, vendors */
+    /* prompt, VAD, greeting, maxHistory via WithName/WithInstructions/etc. */
     agentkit.WithAdvancedFeatures(&agentkit.AdvancedFeatures{
         EnableRtm:   &enableRTM,
         EnableTools: &enableTools,
@@ -76,7 +70,10 @@ agent := agentkit.NewAgent(
         DataChannel:        &dataChannel,        // "rtm"
         EnableErrorMessage: &enableErrorMessage, // true
     }),
-)
+).
+    WithLlm(vendors.NewOpenAI(...)).
+    WithStt(vendors.NewDeepgramSTT(...)).
+    WithTts(vendors.NewMiniMaxTTS(...))
 
 session := agent.CreateSession(s.sessionClient, agentkit.CreateSessionOptions{
     Channel:         channelName,
@@ -106,8 +103,8 @@ agentID, err := session.Start(ctx)
 
 | Type                          | Lives in                                       | Notes                                            |
 | ----------------------------- | ---------------------------------------------- | ------------------------------------------------ |
-| `startAgentRequest`           | `server/agent.go`                              | `channelName`, `rtcUid`, `userUid`               |
-| `stopAgentRequest`            | `server/agent.go`                              | `agentId`                                        |
+| `startAgentRequest`           | `server/main.go`                               | `channelName`, `rtcUid`, `userUid`               |
+| `stopAgentRequest`            | `server/main.go`                               | `agentId`                                        |
 | `configData`                  | `server/agent.go`                              | snake_case JSON tags                              |
 | `startAgentResult`            | `server/agent.go`                              | `agent_id`, `channel_name`, `status`             |
 | `AgoraTokenData`              | `client/src/types/conversation.ts`             | Used by `LandingPage` + `ConversationComponent`  |

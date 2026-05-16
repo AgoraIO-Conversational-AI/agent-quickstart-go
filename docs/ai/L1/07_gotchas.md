@@ -7,7 +7,7 @@
 `client/next.config.ts` only registers `/api/*` rewrites when `AGENT_BACKEND_URL` is a non-empty trimmed string. If it is unset:
 
 - `client/scripts/doctor.ts` exits with an error.
-- `pnpm dev` starts, but every `/api/*` request 404s.
+- `make dev` starts, but every `/api/*` request 404s.
 - The browser silently shows "failed to start agent" with a network-tab 404.
 
 `make dev` always exports `AGENT_BACKEND_URL=http://localhost:8000`. Deploy hosts must set it manually.

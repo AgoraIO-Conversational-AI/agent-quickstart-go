@@ -2,34 +2,32 @@
 
 ## 1. Tech Stack & Project Scope
 
-- Project type: Single repo
-- Frontend framework: React
+- Project type: pnpm workspace package inside the Go quickstart
+- Frontend framework: Next.js App Router
 - Language: TypeScript
-- Build tool: Vite (recommended for React + bun)
+- Build tool: Next.js
 - UI/Styling: Tailwind CSS
-- State management: Zustand
-- Data fetching & caching: React Query
-- SSR/Isomorphic: None
+- State management: Local React state and hooks
+- Data fetching: Fetch calls through `src/services/api.ts`
+- Backend integration: Next rewrites `/api/*` to the Go service when `AGENT_BACKEND_URL` is set
 
 ## 2. Package Management & Toolchain
 
-- Runtime: Bun (latest stable)
-- Package manager: bun
+- Runtime: Node.js through pnpm scripts
+- Package manager: pnpm from the repo root workspace
+- Lockfile: root `pnpm-lock.yaml`
 - Lint/Format: Biome
-- Testing: Vitest
-- CI/CD: GitHub Actions
+- Verification: Make targets and TypeScript scripts run with `pnpm node --import tsx`
 - Code generation: None
 
 ## 3. Runtime & Environment
 
-- Environment variables: `.env` files
-- Required variables:
-  - `VITE_AGORA_APP_ID` - Agora App ID
-  - `VITE_AGORA_TOKEN` - Agora Token (optional for testing)
-- Local/Test/Prod differences: Environment-specific `.env` files
-- Entry point: `src/main.tsx`
-- Default port: 5173 (Vite default)
-- Secrets handling: Never commit `.env` files, use `.env.example` as template
+- Environment variables: `.env.local` files and process env
+- Required local proxy variable:
+  - `AGENT_BACKEND_URL` - Go backend URL for Next rewrites, usually `http://localhost:8000`
+- Entry point: `app/page.tsx`
+- Default port: 3000
+- Secrets handling: Agora credentials stay in `server/.env.local`; the browser receives short-lived tokens from the backend
 
 ## 4. Dependencies & External Services
 
@@ -43,35 +41,32 @@
 ## 5. Module Responsibilities & Directory Structure
 
 ```
+app/
+├── page.tsx        # Root page and Agora provider setup
 src/
-├── components/     # Reusable UI components
-├── hooks/          # Custom React hooks
-├── stores/         # Zustand stores
-├── services/       # API and Agora service wrappers
-├── types/          # TypeScript type definitions
-├── utils/          # Utility functions
-├── pages/          # Page components (if using routing)
-├── App.tsx         # Root component
-└── main.tsx        # Entry point
+├── components/     # Conversation UI components
+├── hooks/          # RTC, RTM, transcript, and agent lifecycle hooks
+├── lib/            # Conversation helpers
+└── services/       # Browser API client for /api/* paths
 ```
 
 ## 6. Data Flow & Routing
 
-- Routing: React Router (if needed) or single-page
+- Routing: Next.js App Router
 - Data flow:
-  1. User action triggers hook/component
-  2. React Query manages server state
-  3. Zustand manages client state
-  4. Components re-render on state change
-- Error handling: React Query error boundaries + toast notifications
-- Loading states: React Query loading states + skeleton components
+  1. User starts a conversation in the web UI
+  2. `src/services/api.ts` calls stable browser paths under `/api/*`
+  3. `next.config.ts` rewrites those paths to the Go backend in local proxy mode
+  4. RTC and RTM lifecycle state stays in React hooks and component state
+- Error handling: Component-level error state surfaced in the conversation UI
+- Loading states: Local React state
 
 ## 7. Build & Deployment
 
-- Build command: `bun run build`
-- Output: `dist/`
-- Deployment target: Static hosting (Vercel, Netlify, etc.)
-- Version strategy: Semantic versioning
+- Build command: `pnpm build` from `client/`, or `make build-web` from the repo root
+- Output: `.next/`
+- Deployment target: Next.js hosting for `client`
+- Local mode: `make dev` starts both the Go backend and Next frontend
 - Rollback: Redeploy previous version
 
 ## 8. Constraints & Known Issues

@@ -58,6 +58,6 @@ The Go backend uses app credentials mode with the official Agora Agent Server SD
 
 ## References
 
-- [client/ARCHITECTURE.md](./client/ARCHITECTURE.md)
-- [server/ARCHITECTURE.md](./server/ARCHITECTURE.md)
+- [docs/ai/L1/02_architecture.md](./docs/ai/L1/02_architecture.md) — detailed client ↔ server flow
+- [docs/ai/L1/03_code_map.md](./docs/ai/L1/03_code_map.md) — where code lives under `client/` and `server/`
 - [README.md](./README.md)

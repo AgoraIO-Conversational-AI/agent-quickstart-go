@@ -161,8 +161,8 @@ The browser always calls Next `/api/*` routes. In local mode those routes proxy 
 
 - [ARCHITECTURE.md](./ARCHITECTURE.md)
 - [AGENTS.md](./AGENTS.md)
-- [client/ARCHITECTURE.md](./client/ARCHITECTURE.md)
-- [server/ARCHITECTURE.md](./server/ARCHITECTURE.md)
+- [docs/ai/L1/02_architecture.md](./docs/ai/L1/02_architecture.md) — full-stack topology and lifecycle
+- [docs/ai/L1/03_code_map.md](./docs/ai/L1/03_code_map.md) — curated `client/` + `server/` file map
 
 ## License
 

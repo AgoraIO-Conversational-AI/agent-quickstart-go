@@ -1,6 +1,6 @@
 # Agora Agent Service
 
-Gin-based Agora Conversational AI backend using the official Go SDK: `github.com/AgoraIO-Conversational-AI/agent-server-sdk-go`.
+Gin-based Agora Conversational AI backend using the official Go SDK: `github.com/AgoraIO/agora-agents-go/v2`.
 
 ## Quick Start
 
@@ -131,6 +131,6 @@ make verify-local-go
 
 ## Repo Fit
 
-- Local full-stack mode: the Next route handlers proxy here through `AGENT_BACKEND_URL`
-- Deployment mode: the Next app can serve the same contract directly without this module
+- Local full-stack mode: Next rewrites proxy here through `AGENT_BACKEND_URL`
+- Deployment mode: deploy this service separately and point the Next app's `AGENT_BACKEND_URL` at it
 - This backend uses Gin plus the official Go Agent Server SDK, not a hand-written direct REST client

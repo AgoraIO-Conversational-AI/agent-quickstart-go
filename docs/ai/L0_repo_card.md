@@ -9,9 +9,12 @@
 | Repo          | `AgoraIO-Conversational-AI/agent-quickstart-go`                    |
 | Type          | `distributed-system` (single repo, two co-located processes)       |
 | Language      | Go 1.23 (Gin) backend + Next.js 16 / React 19 / TypeScript client  |
-| Deploy Target | `client/` as Next.js app, `server/` as a reachable Go service      |
+| Deploy Target | `client/` as Next.js app with rewrites to a reachable Go service   |
 | Owner         | Agora Conversational AI DevEx                                      |
-| Last Reviewed | 2026-05-15                                                         |
+| Last Reviewed | 2026-05-28                                                         |
+| Recipe Role   | `base`                                                             |
+| Recipe Version| `1.0.0`                                                            |
+| Recipe Status | `experimental`                                                     |
 
 ## L1 — Summaries
 

@@ -12,6 +12,7 @@ README.md                 # Setup + commands
 ARCHITECTURE.md           # Top-level environment model
 AGENTS.md                 # Contributor entry point
 CLAUDE.md                 # Pointer to AGENTS.md
+docs/ai/RECIPE.md         # Base recipe contract: extension points, invariants, stable contracts
 
 client/                   # Next.js 16 web app
   app/
@@ -99,4 +100,5 @@ server/                   # Go (Gin) backend
 
 ## Related Deep Dives
 
+- [From-Scratch Bootstrap](L2/from_scratch_bootstrap.md) — Implementation map for recreating the Go-backed recipe.
 - [Session Lifecycle](L2/session_lifecycle.md) — Concrete walk through `LandingPage` + `ConversationComponent`.

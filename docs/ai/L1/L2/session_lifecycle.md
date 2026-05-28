@@ -1,6 +1,6 @@
-# Session Lifecycle
-
 > **When to Read This:** Load this document when you are touching `LandingPage.tsx`, `ConversationComponent.tsx`, RTM bootstrap, or token renewal — anything in the browser orchestration path.
+
+# Session Lifecycle
 
 ## Why It Matters
 
@@ -14,7 +14,7 @@ User clicks "Start"
    ▼
 LandingPage.tsx
    │
-   ├─▶ getConfig()                       (POST /api/get_config → GET /get_config)
+   ├─▶ getConfig()                       (GET /api/get_config → GET /get_config)
    │     ◀── data: { app_id, token, uid, channel_name, agent_uid }
    │
    ├─▶ startAgent(channel_name, agent_uid, uid)    (POST /api/startAgent)
@@ -67,8 +67,8 @@ RTC fires `token-privilege-will-expire` ~30 seconds before expiry. `Conversation
 async function handleTokenWillExpire(joinedUid: UID) {
   if (!joinedUid) return; // skip if RTC never reported a uid
   const [rtcConfig, rtmConfig] = await Promise.all([
-    getConfig(agoraData.channel, joinedUid),
-    getConfig(agoraData.channel, agoraData.uid),
+    getConfig({ channel: agoraData.channel, uid: joinedUid }),
+    getConfig({ channel: agoraData.channel, uid: agoraData.uid }),
   ]);
   await client.renewToken(rtcConfig.token);
   await rtmClient.renewToken(rtmConfig.token);
@@ -84,12 +84,13 @@ Why two `getConfig` calls?
 
 ## Ending the Call
 
-`stopConversation()` does:
+Ending the conversation starts in `ConversationComponent.handleEndConversation()` and then calls `LandingPage.handleEndConversation()`:
 
-1. Pause publishing (`track.setEnabled(false)`).
-2. Call `stopAgent(agoraData.agentId)` if there is one. The handler tolerates `400`/`404` because the user may double-tap end.
-3. Call `rtmClient.logout()`.
-4. Reset state (`setAgoraData(null)`, `setRtmClient(null)`).
+1. Unpublish the microphone track from RTC.
+2. Stop and close the local microphone track.
+3. Call `stopAgent(agoraData.agentId)` if there is one; failures are logged and the UI still tears down.
+4. Call `rtmClient.logout()`.
+5. Reset state (`setAgoraData(null)`, `setRtmClient(null)`, `setShowConversation(false)`).
 
 The order matters: stopping the agent before RTM logout means the user keeps receiving transcripts of any final agent words.
 

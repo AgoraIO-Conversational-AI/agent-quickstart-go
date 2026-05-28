@@ -10,7 +10,7 @@
 - `make dev` starts, but every `/api/*` request 404s.
 - The browser silently shows "failed to start agent" with a network-tab 404.
 
-`make dev` always exports `AGENT_BACKEND_URL=http://localhost:8000`. Deploy hosts must set it manually.
+`make dev` always exports `AGENT_BACKEND_URL=http://localhost:8000`. Ad-hoc client runs and deploy hosts must set it manually.
 
 ## No `client/app/api/**/route.ts`
 
@@ -20,9 +20,10 @@
 - Diverge behavior between local dev and deployed environments.
 - Fail `make verify-web-api` immediately.
 
-## README / Code Drift Around Deploy
+## Deploy Must Stay Rewrite-Backed
 
-- The root `README.md` deploy section describes a "single-target" mode where `/api/*` is served in-process by Next. That mode does **not** exist in this client — there are no route handlers and `verify-api-contracts.ts` forbids them. Treat the deploy path as **rewrite-proxy** to a hosted Go service.
+- Deploy the Next app and Go service separately, then set `AGENT_BACKEND_URL` on the Next host to the public Go service URL.
+- A single-target Next deployment with in-process `/api/*` handlers does **not** exist in this repo today; adding it requires an intentional architecture change and docs updates.
 - Per-module `AGENTS.md` / `ARCHITECTURE.md` under `client/` and `server/` were removed. Use repo-root `ARCHITECTURE.md`, `AGENTS.md`, and `docs/ai/L1/` instead of looking for copies next to each crate.
 
 ## StrictMode + RTC

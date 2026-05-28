@@ -9,12 +9,14 @@
 | Path           | Method | Request                                                         | Success (200)                                                                                | Errors                                                  |
 | -------------- | ------ | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
 | `/get_config`  | GET    | Query: optional `channel`, optional `uid`                       | `{ "code": 0, "msg": "success", "data": { app_id, token, uid, channel_name, agent_uid } }`   | `400` invalid uid; `500` `service == nil`; `toHTTPError` |
-| `/startAgent`  | POST   | JSON `{ channelName, rtcUid, userUid }` (`startAgentRequest`)   | `{ "code": 0, "msg": "success", "data": { agent_id, channel_name, status } }`                | `400` invalid JSON; `500` service errors                |
-| `/stopAgent`   | POST   | JSON `{ agentId }` (`stopAgentRequest`)                          | `{ "code": 0, "msg": "success" }`                                                            | `400` invalid JSON; `500` service errors                |
+| `/startAgent`  | POST   | JSON `{ channelName, rtcUid, userUid }` (`startAgentRequest`)   | `{ "code": 0, "msg": "success", "data": { agent_id, channel_name, status } }`                | `400` invalid JSON or validation error; `500` other service errors |
+| `/stopAgent`   | POST   | JSON `{ agentId }` (`stopAgentRequest`)                          | `{ "code": 0, "msg": "success" }`                                                            | `400` invalid JSON or validation error; `500` other service errors |
 
 All routes go through `cors.New(...)` with `AllowAllOrigins: true` and methods `GET`/`POST`/`OPTIONS`.
 
 `generateConfig` treats missing, zero, and negative UIDs as "generate a random user UID" and returns the generated value. This keeps the single RTC+RTM token usable for RTM, where `0` is not a valid login subject.
+
+Error responses use `{ "detail": "..." }`, not the success envelope.
 
 ## Next.js Rewrites
 
@@ -69,6 +71,7 @@ agent := agentkit.NewAgent(
     agentkit.WithParameters(&agentkit.SessionParams{
         DataChannel:        &dataChannel,        // "rtm"
         EnableErrorMessage: &enableErrorMessage, // true
+        EnableMetrics:      &enableMetrics,      // true
     }),
 ).
     WithLlm(vendors.NewOpenAI(...)).

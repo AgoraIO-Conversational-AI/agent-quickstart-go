@@ -1,6 +1,6 @@
 # Agora Agent Service
 
-Gin-based Agora Conversational AI backend using the official Go SDK: `github.com/AgoraIO-Conversational-AI/agent-server-sdk-go`.
+Gin-based Agora Conversational AI backend using the official Go SDK: `github.com/AgoraIO/agora-agents-go/v2`.
 
 ## Quick Start
 

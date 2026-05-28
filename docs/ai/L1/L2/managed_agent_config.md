@@ -63,7 +63,7 @@ agent := agentkit.NewAgent(
     }))
 ```
 
-The exact field names match `agora-agent-server-sdk-go`. If you bump the SDK, re-check field names — some options moved between minor versions.
+The exact field names match `agora-agents-go`. If you bump the SDK, re-check field names — some options moved between minor versions.
 
 ## Session Options
 
@@ -114,7 +114,7 @@ Edit the `TurnDetectionConfig` passed to `agentkit.WithTurnDetectionConfig`. The
 
 ### Swap STT / LLM / TTS
 
-Replace the corresponding `vendors.New*` constructor. The SDK exposes alternatives — check `agora-agent-server-sdk-go/vendors`. For a BYOK provider, pass `APIKey: os.Getenv("PROVIDER_API_KEY")` to the constructor and document the env var in `server/.env.example`.
+Replace the corresponding `vendors.New*` constructor. The SDK exposes alternatives — check `github.com/AgoraIO/agora-agents-go/v2/agentkit/vendors`. For a BYOK provider, pass `APIKey: os.Getenv("PROVIDER_API_KEY")` to the constructor and document the env var in `server/.env.example`.
 
 ### Session-Level Tuning
 

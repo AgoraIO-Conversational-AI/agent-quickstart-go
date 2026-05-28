@@ -68,7 +68,7 @@ When adding a new field, mirror its name in both `server/main.go` (or `agent.go`
 
 ## Module Discipline
 
-- `server/agent.go` is the only place that imports `agora-agent-server-sdk-go`.
+- `server/agent.go` is the only place that imports `github.com/AgoraIO/agora-agents-go/v2`.
 - `client/src/services/api.ts` is the only place that hard-codes `/api/...` paths (apart from `next.config.ts`).
 - `client/scripts/` must remain dependency-free of `client/src/` — they run before `pnpm build` and stand alone.
 

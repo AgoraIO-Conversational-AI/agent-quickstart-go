@@ -11,10 +11,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/AgoraIO-Conversational-AI/agent-server-sdk-go/agentkit"
-	"github.com/AgoraIO-Conversational-AI/agent-server-sdk-go/agentkit/vendors"
-	"github.com/AgoraIO-Conversational-AI/agent-server-sdk-go/client"
-	"github.com/AgoraIO-Conversational-AI/agent-server-sdk-go/option"
+	"github.com/AgoraIO/agora-agents-go/v2/agentkit"
+	"github.com/AgoraIO/agora-agents-go/v2/agentkit/vendors"
+	"github.com/AgoraIO/agora-agents-go/v2/option"
 )
 
 const adaPrompt = `You are Ada, an agentic developer advocate from Agora. You help developers understand and build with Agora's Conversational AI platform.
@@ -64,13 +63,11 @@ func newAgentService() (*agentService, error) {
 		return nil, errors.New("AGORA_APP_ID and AGORA_APP_CERTIFICATE are required")
 	}
 
-	generatedClient := client.NewClient(option.WithArea(option.AreaUS))
-	agoraClient := &agentkit.AgoraClient{
-		Agents:         generatedClient.Agents,
+	agoraClient := agentkit.NewAgoraClient(agentkit.AgoraClientOptions{
+		Area:           option.AreaUS,
 		AppID:          appID,
 		AppCertificate: certificate,
-		AuthMode:       agentkit.AuthModeAppCredentials,
-	}
+	})
 
 	return &agentService{
 		appID:       appID,
@@ -106,7 +103,7 @@ func (s *agentService) generateConfig(channel string, uid int) (*configData, err
 		AppID:          s.appID,
 		AppCertificate: s.certificate,
 		ChannelName:    channelName,
-		Account:        strconv.Itoa(userUID),
+		UID:            userUID,
 		TokenExpire:    expiry,
 	})
 	if err != nil {
@@ -142,6 +139,7 @@ func (s *agentService) start(channelName string, agentUID, userUID int) (*startA
 	enableRTM := true
 	enableTools := true
 	enableErrorMessage := true
+	enableMetrics := true
 	dataChannel := agentkit.ParametersDataChannel("rtm")
 	enableStringUID := false
 	idleTimeout := 30
@@ -182,6 +180,7 @@ func (s *agentService) start(channelName string, agentUID, userUID int) (*startA
 		agentkit.WithParameters(&agentkit.SessionParams{
 			DataChannel:        &dataChannel,
 			EnableErrorMessage: &enableErrorMessage,
+			EnableMetrics:      &enableMetrics,
 		}),
 	).
 		WithLlm(vendors.NewOpenAI(vendors.OpenAIOptions{

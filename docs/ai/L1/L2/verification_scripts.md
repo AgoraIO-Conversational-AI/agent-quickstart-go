@@ -1,6 +1,6 @@
-# Verification Scripts
-
 > **When to Read This:** Load this document when you are adding a route, changing the proxy boundary, debugging a failing `make verify*` command, or expanding the contract harness.
+
+# Verification Scripts
 
 ## The Four Verification Layers
 

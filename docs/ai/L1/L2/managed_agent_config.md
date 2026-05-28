@@ -1,6 +1,6 @@
-# Managed Agent Config
-
 > **When to Read This:** Load this document when you are changing the agent's prompt, voice, VAD behavior, model selection, session options, or wiring a bring-your-own-key (BYOK) provider on the Go side.
+
+# Managed Agent Config
 
 ## Where It Lives
 
@@ -42,6 +42,7 @@ agent := agentkit.NewAgent(
     agentkit.WithParameters(&agentkit.SessionParams{
         DataChannel:        &dataChannel,        // "rtm"
         EnableErrorMessage: &enableErrorMessage, // true
+        EnableMetrics:      &enableMetrics,      // true
     }),
 ).
     WithLlm(vendors.NewOpenAI(vendors.OpenAIOptions{
@@ -85,7 +86,7 @@ agentID, err := session.Start(ctx)
 | Option            | Effect                                                                      |
 | ----------------- | --------------------------------------------------------------------------- |
 | `Channel`         | The RTC channel the agent joins.                                            |
-| `AgentUID`        | UID the agent occupies; must match `AGENT_UID` in the web client.           |
+| `AgentUID`        | UID the agent occupies; the backend returns this as `agent_uid` for the web client. |
 | `RemoteUIDs`      | Restricts the agent to the requester's UID; prevents cross-channel sniping. |
 | `EnableStringUID` | `false` keeps UIDs numeric for both RTC and RTM.                            |
 | `IdleTimeout`     | Seconds of silence before the session ends.                                 |
@@ -119,8 +120,8 @@ Replace the corresponding `vendors.New*` constructor. The SDK exposes alternativ
 ### Session-Level Tuning
 
 - Lower `IdleTimeout` (e.g. 15) for short demos. It is a pointer field (`&idleTimeout`).
-- `DataChannel` is set via `agentkit.WithParameters(&agentkit.SessionParams{DataChannel: ...})` on the agent, not in `CreateSessionOptions`. Switch to `"sct"` only if you are not relying on RTM transcripts.
-- `enable_metrics` is not exposed in the current Go SDK's `SessionParams` — metrics arrive automatically when `DataChannel` is `"rtm"` and the managed service supports them.
+- `DataChannel`, `EnableErrorMessage`, and `EnableMetrics` are set via `agentkit.WithParameters(&agentkit.SessionParams{...})` on the agent, not in `CreateSessionOptions`.
+- Switch `DataChannel` to `"sct"` only if you are not relying on RTM transcripts or the current RTM event handlers.
 
 ## Response Contract
 
@@ -140,7 +141,7 @@ Replace the corresponding `vendors.New*` constructor. The SDK exposes alternativ
 
 The client stores `agent_id` in `agoraData` and later passes it to `/api/stopAgent`.
 
-Stop is idempotent: `agentService.stop` tries `session.Stop(ctx)` on the in-memory session first (mutex-protected), then falls back to `stopClient.StopAgent(ctx, agentID)`. A 404 from `StopAgent` resolves without error.
+Stop is best-effort from the browser perspective: `LandingPage` catches and logs stop failures. On the server, `agentService.stop` tries `session.Stop(ctx)` on the in-memory session first (mutex-protected), then falls back to `stopClient.StopAgent(ctx, agentID)` and returns any fallback error.
 
 ## Verification
 
@@ -156,10 +157,10 @@ After editing `agent.go`, run `make fmt && make verify-backend`.
 
 | Symptom                                              | Cause                                                                  |
 | ---------------------------------------------------- | ---------------------------------------------------------------------- |
-| `500 Agora credentials are not set`                  | Missing `AGORA_APP_ID` / `AGORA_APP_CERTIFICATE` in `server/.env.local`. |
+| `500 Service not properly configured`                | Missing `AGORA_APP_ID` / `AGORA_APP_CERTIFICATE` in `server/.env.local`. |
 | Agent joins but never speaks                         | TTS vendor key missing or wrong `VoiceID`.                              |
 | Agent state stuck in `IDLE`                          | `EnableRtm` is `false` in `WithAdvancedFeatures`, or RTM subscribed before login. |
-| Metrics events missing                               | `enable_metrics` is not in Go `SessionParams`; metrics flow automatically when `DataChannel` is `"rtm"`. |
+| Metrics events missing                               | `EnableMetrics` is not true, `DataChannel` is not `"rtm"`, or the managed service did not emit metrics. |
 | Build fails: `unknown field`                         | SDK version mismatch; run `go mod tidy` and check `server/go.mod`.      |
 
 ## Parity With the Python Quickstart

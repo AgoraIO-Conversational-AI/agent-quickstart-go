@@ -9,6 +9,7 @@ This repository uses progressive disclosure documentation. Docs live under `docs
 1. Read [docs/ai/L0_repo_card.md](docs/ai/L0_repo_card.md) to identify the repo.
 2. Load ALL 8 files in [docs/ai/L1/](docs/ai/L1/). They are small — load all upfront.
 3. Follow L2 deep-dive links only when L1 isn't detailed enough. The index is at [docs/ai/L1/L2/_index.md](docs/ai/L1/L2/_index.md).
+4. This repo declares `Recipe Role: base`; also read [docs/ai/RECIPE.md](docs/ai/RECIPE.md) before changing extension points or stable contracts.
 
 The sections below (Start Here, Patterns, Anti-Patterns, etc.) remain the canonical contributor handbook for hands-on work; the `docs/ai/` tree is the structured summary used by AI agents.
 
@@ -145,7 +146,6 @@ Before finishing a change:
 - **Scoped variant:** `feat(scope):`, `fix(scope):` — e.g. `feat(server): add greeting env override`
 - **Lowercase after prefix** — `feat: add feature`, not `feat: Add feature`
 - **Present tense** — "add feature", not "added feature"
-- **PR number appended** — `feat: add feature (#123)`
 
 ### Branch names
 
@@ -167,5 +167,6 @@ Before finishing a change:
 | generate docs   | No `docs/ai/` directory exists yet                           |
 | update docs     | Code changed since the `Last Reviewed` date in L0            |
 | test docs       | Verify docs give agents the right context (writes `docs/ai/test-results.md`) |
+| fix docs        | Close findings from a docs review or test run                |
 
-The generator and tester live in the [AgoraIO-Community/ai-devkit](https://github.com/AgoraIO-Community/ai-devkit) skill set. See the [progressive disclosure standard](https://github.com/AgoraIO-Community/ai-devkit/blob/main/docs/progressive-disclosure-standard.md) for the full specification.
+The generator and tester live in the [AgoraIO-Community/ai-devkit](https://github.com/AgoraIO-Community/ai-devkit) skill set. See the [progressive disclosure standard](https://github.com/AgoraIO-Community/ai-devkit/blob/main/docs/standard/progressive-disclosure-standard.md) for the full specification.

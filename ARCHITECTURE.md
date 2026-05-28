@@ -1,6 +1,6 @@
 # Agora Conversational AI Demo — Architecture
 
-The UI stays the same across environments. What changes is who owns `/api/*`.
+The UI stays the same across environments. Next owns the browser-facing `/api/*` paths as rewrites; the Go service owns the backend handlers.
 
 ## Local Go-Backed Development
 
@@ -9,7 +9,7 @@ Browser
   ↓
 Next.js app on :3000
   ↓
-/api/* route handlers proxy through AGENT_BACKEND_URL
+/api/* rewrites through AGENT_BACKEND_URL
   ↓
 Gin service on :8000
   ↓
@@ -20,20 +20,23 @@ Agora Cloud Services
 - `server` owns token generation and agent lifecycle for local development
 - `make dev` starts both services together
 
-## Single-Target Web Deployment
+## Deployed Rewrite Mode
 
 ```text
 Browser
   ↓
 Next.js app
   ↓
-/api/* route handlers run in-process
+/api/* rewrites through AGENT_BACKEND_URL
+  ↓
+Reachable Gin service
   ↓
 Agora Cloud Services
 ```
 
-- `client` handles both UI and API
-- `server` is optional unless you want an external backend
+- `client` handles the UI and the rewrite facade
+- `server` remains required unless the architecture intentionally adds Next route handlers
+- `AGENT_BACKEND_URL` must point to the deployed Go service
 
 ## Shared Flow
 
@@ -50,7 +53,7 @@ Agora Cloud Services
 | `/startAgent` | POST | Start an agent session |
 | `/stopAgent` | POST | Stop an agent session |
 
-The frontend always calls `/api/*`. In local mode those handlers proxy to `AGENT_BACKEND_URL`; in deployment they execute directly in the Next app.
+The frontend always calls `/api/*`. `client/next.config.ts` rewrites those paths to `AGENT_BACKEND_URL`; no `client/app/api/**/route.ts` handlers exist in this repo.
 
 ## Authentication
 

@@ -59,13 +59,9 @@ Services:
 
 ## Deploy
 
-Default deployment is `client` only (single target). In this mode, Next route handlers run in-process for:
+Deploy the Next.js `client` and the Go `server` as separate targets. The browser still calls stable `/api/*` paths, but this repo is rewrite-only: `client/next.config.ts` forwards those requests to the Go backend through `AGENT_BACKEND_URL`.
 
-- `/api/get_config`
-- `/api/startAgent`
-- `/api/stopAgent`
-
-Required deployment env vars:
+Required Go backend env vars:
 
 ```bash
 AGORA_APP_ID=your_agora_app_id
@@ -73,7 +69,13 @@ AGORA_APP_CERTIFICATE=your_agora_app_certificate
 AGENT_GREETING=optional_custom_greeting
 ```
 
-Leave `AGENT_BACKEND_URL` unset in deployment unless you intentionally want to proxy to an external backend.
+Required Next.js env var:
+
+```bash
+AGENT_BACKEND_URL=https://your-go-backend.example.com
+```
+
+Set `AGENT_BACKEND_URL` in the deployed Next.js environment to the public URL of the Go backend. If it is unset, no `/api/*` rewrites are registered.
 
 To export env values from your Agora CLI-bound project:
 
@@ -95,7 +97,7 @@ Primary backend env file: [`server/.env.example`](server/.env.example).
 | `PORT` |  | `8000` | Gin backend port |
 | `AGENT_BACKEND_URL` (local proxy mode) | ✅ (local proxy mode) | `http://localhost:8000` | Used by frontend scripts in local Go-backed mode |
 
-> **Runtime modes** — local mode proxies Next `/api/*` routes to Gin (`AGENT_BACKEND_URL=http://localhost:8000`). Single-target deploy mode runs those routes in-process in Next.
+> **Runtime modes** — local mode proxies Next `/api/*` routes to Gin (`AGENT_BACKEND_URL=http://localhost:8000`). Deployment uses the same rewrite contract pointed at a reachable Go backend.
 
 ## Commands
 
@@ -125,7 +127,7 @@ Run `make verify` for web-focused changes, and `make verify-local` when backend/
   <img src="./.github/images/system-architecture.svg" alt="System architecture">
 </picture>
 
-The browser always calls Next `/api/*` routes. In local mode those routes proxy to Gin through `AGENT_BACKEND_URL`; in deployment they run directly in Next. Both modes keep the same browser contract.
+The browser always calls Next `/api/*` paths. In local and deployed modes those paths are Next rewrites to Gin through `AGENT_BACKEND_URL`; both modes keep the same browser contract.
 
 ## What You Get
 
@@ -153,9 +155,9 @@ The browser always calls Next `/api/*` routes. In local mode those routes proxy 
 
 - **`make doctor-local` fails:** confirm Go 1.23+ and non-empty `AGORA_APP_ID` + `AGORA_APP_CERTIFICATE` in `server/.env.local`.
 - **Credentials missing:** run `agora project env write server/.env.local --with-secrets`.
-- **Frontend cannot reach backend in local mode:** confirm `make dev` is running and frontend uses `AGENT_BACKEND_URL=http://localhost:8000`.
+- **Frontend cannot reach backend:** confirm the Go service is running and the frontend has `AGENT_BACKEND_URL` set to that service URL.
 - **Agent does not join channel:** verify the selected Agora project has Conversational AI managed provider support enabled.
-- **Unsure who owns `/api/*`:** local mode proxies to Gin; deployed mode runs handlers in-process unless `AGENT_BACKEND_URL` is set.
+- **Unsure who owns `/api/*`:** Next owns the browser-facing paths as rewrites; Gin owns the backend handlers.
 
 ## More Docs
 

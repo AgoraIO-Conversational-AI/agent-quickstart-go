@@ -42,10 +42,9 @@
 
 ```
 app/
-├── page.tsx        # Root page and Agora provider setup
+├── page.tsx        # Root page; renders LandingPage
 src/
 ├── components/     # Conversation UI components
-├── hooks/          # RTC, RTM, transcript, and agent lifecycle hooks
 ├── lib/            # Conversation helpers
 └── services/       # Browser API client for /api/* paths
 ```
@@ -57,7 +56,7 @@ src/
   1. User starts a conversation in the web UI
   2. `src/services/api.ts` calls stable browser paths under `/api/*`
   3. `next.config.ts` rewrites those paths to the Go backend in local proxy mode
-  4. RTC and RTM lifecycle state stays in React hooks and component state
+  4. RTM bootstrap stays in `LandingPage`; RTC join, publish, transcript, and metrics state stay in `ConversationComponent`
 - Error handling: Component-level error state surfaced in the conversation UI
 - Loading states: Local React state
 
@@ -79,7 +78,7 @@ src/
   - Network reconnection logic
 - Behaviors that must not break:
   - Real-time audio/video streaming
-  - Conversation state persistence
+  - Conversation state reset on end-call cleanup
 
 ## 9. Update Log
 

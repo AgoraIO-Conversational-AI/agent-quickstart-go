@@ -43,16 +43,16 @@ When adding a new field, mirror its name in both `server/main.go` (or `agent.go`
 
 - Components are PascalCase `.tsx` files under `client/src/components/`. Shared primitives live under `components/ui/` in lowercase files (`button.tsx`, `dropdown-menu.tsx`).
 - The RTC client is held in a `useRef` inside a dynamically imported `AgoraRTCProvider` to survive React StrictMode double-mount.
-- `useJoin`, `useLocalMicrophoneTrack`, and `usePublish` from `agora-rtc-react` own their lifecycles. Do not call `client.leave()`, `track.close()`, or `client.unpublish` manually.
+- `useJoin`, `useLocalMicrophoneTrack`, and `usePublish` from `agora-rtc-react` own normal mount/unmount lifecycles. The current end-call handler explicitly unpublishes and closes the microphone track before parent cleanup; avoid adding extra cleanup paths elsewhere.
 - `normalizeTranscript` in `client/src/lib/conversation.ts` remaps `uid === '0'` to the local UID. New transcript renderers must keep this remap upstream of any side-of-screen heuristic.
 
 ## Hook Ownership Quick Reference
 
 | Hook                       | Owns                          | Anti-pattern                                       |
 | -------------------------- | ----------------------------- | -------------------------------------------------- |
-| `useJoin`                  | `client.leave()`              | Manual `client.leave()` calls in cleanup            |
-| `useLocalMicrophoneTrack`  | Track creation + `.close()`   | Manual `track.close()` after StrictMode unmount     |
-| `usePublish`               | Publish state                 | Manually `unpublish` to mute (use `setEnabled`)     |
+| `useJoin`                  | `client.leave()`              | Manual `client.leave()` calls in component cleanup  |
+| `useLocalMicrophoneTrack`  | Track creation                | Closing the same track from multiple cleanup paths  |
+| `usePublish`               | Publish state                 | Using `unpublish` for mute toggles (use `setEnabled`) |
 
 ## Testing
 
@@ -74,7 +74,7 @@ When adding a new field, mirror its name in both `server/main.go` (or `agent.go`
 
 ## Error Handling Shapes
 
-- Go: callers receive a typed `error`. Validation-shaped errors (`fmt.Errorf("channelName required")`) bubble up to `toHTTPError`, which returns `400` with `{ "code": 1, "msg": "<message>" }`. Anything else becomes `500` with the same envelope shape.
+- Go: callers receive an `error`. Validation-shaped errors bubble up to `toHTTPError`, which returns `400` with `{ "detail": "<message>" }`. Anything else becomes `500` with the same `detail` shape.
 - TS: `api.ts` helpers throw on non-2xx HTTP; callers (`LandingPage`) catch with `try/catch` and surface a user-friendly message via the existing `ConnectionStatusPanel` issue list.
 
 ## Related Deep Dives

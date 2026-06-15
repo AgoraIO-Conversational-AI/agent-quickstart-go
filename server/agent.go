@@ -182,6 +182,8 @@ func (s *agentService) start(channelName string, agentUID, userUID int) (*startA
 			EnableErrorMessage: &enableErrorMessage,
 			EnableMetrics:      &enableMetrics,
 		}),
+		// web client → ultra-low-latency chorus profile
+		agentkit.WithAudioScenario(agentkit.ParametersAudioScenario("chorus")),
 	).
 		WithLlm(vendors.NewOpenAI(vendors.OpenAIOptions{
 			Model:           "gpt-4o-mini",

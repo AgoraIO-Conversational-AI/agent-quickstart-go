@@ -150,7 +150,7 @@ func (s *agentService) start(channelName string, agentUID, userUID int) (*startA
 	silenceDurationMs := 480
 
 	agent := agentkit.NewAgent(
-		agentkit.WithName(fmt.Sprintf("agent_%s_%d_%d", channelName, agentUID, time.Now().Unix())),
+		s.sessionClient,
 		agentkit.WithInstructions(adaPrompt),
 		agentkit.WithGreeting(s.greeting),
 		agentkit.WithFailureMessage("Please wait a moment."),
@@ -203,7 +203,7 @@ func (s *agentService) start(channelName string, agentUID, userUID int) (*startA
 			VoiceID: "English_captivating_female1",
 		}))
 
-	session := agent.CreateSession(s.sessionClient, agentkit.CreateSessionOptions{
+	session := agent.CreateSession(agentkit.CreateSessionOptions{
 		Channel:         channelName,
 		AgentUID:        strconv.Itoa(agentUID),
 		RemoteUIDs:      []string{strconv.Itoa(userUID)},

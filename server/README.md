@@ -15,7 +15,7 @@ make setup
 Agora credentials:
 
 ```bash
-agora project env write server/.env.local --with-secrets
+agora quickstart env write .
 ```
 
 Run the app:
@@ -31,13 +31,13 @@ This assumes the Agora CLI is installed and logged in. The command uses the proj
 If you are not using the Agora CLI, create the env file manually and fill in your project values:
 
 ```bash
-cp server/.env.example server/.env.local
+cp server/.env.example server/.env
 ```
 
 Backend-only workflow from `server/`:
 
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 go mod tidy
 gofmt -w *.go cmd/fake-server/*.go
 go test ./...
@@ -48,7 +48,7 @@ go run .
 Backend-only Agora CLI env write from `server/`:
 
 ```bash
-agora project env write .env.local --with-secrets
+agora quickstart env write ..
 ```
 
 Required env vars:
@@ -70,7 +70,7 @@ AGENT_GREETING=Hi there! I'm Ada, your virtual assistant from Agora. How can I h
 PORT=8000
 ```
 
-`.env.example` is only the reference template. The recommended setup flow is to let the Agora CLI write the real values into `.env.local`.
+`.env.example` is only the reference template. The recommended setup flow is to let the Agora CLI write the real values into `.env`.
 
 If you still need to authenticate with the CLI:
 
@@ -82,7 +82,7 @@ To select a specific existing project before writing env values, run this from t
 
 ```bash
 agora project use <project-id-or-name>
-agora project env write server/.env.local --with-secrets
+agora quickstart env write .
 ```
 
 To create a new project instead of using your default project:
@@ -90,7 +90,7 @@ To create a new project instead of using your default project:
 ```bash
 agora project create my-first-voice-agent --feature rtc --feature convoai
 agora project use my-first-voice-agent
-agora project env write server/.env.local --with-secrets
+agora quickstart env write .
 ```
 
 ## API Endpoints

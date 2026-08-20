@@ -58,7 +58,7 @@ If `AGENT_BACKEND_URL` is unset/empty, **no rewrites register** — the client c
 
 - `gin.Default()` with `cors.AllowAll`-style middleware.
 - Routes: `GET /get_config`, `POST /startAgent`, `POST /stopAgent`.
-- `loadEnvFiles` reads `.env.local` then `.env` from the current working directory.
+- `loadEnvFiles` reads `.env` from the current working directory.
 - Handlers wrap responses as `gin.H{ "code": 0, "data": ..., "msg": "success" }`.
 
 `server/agent.go`:

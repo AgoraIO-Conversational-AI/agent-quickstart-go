@@ -72,6 +72,7 @@ The sections below (Start Here, Patterns, Anti-Patterns, etc.) remain the canoni
 - Prefer the smallest change that keeps local mode and deployed mode aligned.
 - Keep Go-specific agent lifecycle changes in `server`.
 - Keep browser state and RTC/RTM lifecycle changes in `client`.
+- Treat `server/.env` as CLI-managed by default.
 - If you change request or response contracts, update the web client, backend, contract checks, and README together.
 
 ## Commands

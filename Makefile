@@ -26,14 +26,14 @@ help:
 setup: setup-env setup-backend setup-frontend
 	@printf "\nSetup complete.\n"
 	@printf "Next steps:\n"
-	@printf "  1. Run: agora project env write server/.env.local --with-secrets\n"
+	@printf "  1. Run: agora quickstart env write .\n"
 	@printf "  2. Run: make doctor-local\n"
 	@printf "  3. Run: make dev\n"
 
 setup-env:
-	@if [ ! -f server/.env.local ]; then \
-		cp server/.env.example server/.env.local; \
-		printf "\nCreated server/.env.local. Edit your Agora credentials before running the app.\n"; \
+	@if [ ! -f server/.env ]; then \
+		cp server/.env.example server/.env; \
+		printf "\nCreated server/.env. Edit your Agora credentials before running the app.\n"; \
 	fi
 
 setup-backend:
@@ -59,9 +59,9 @@ doctor-local: doctor
 		1.23*|1.24*|1.25*|1.26*|2.*) printf -- "- go version $$GO_VERSION\n" ;; \
 		*) printf -- "- go 1.23 or newer is required; found $$GO_VERSION\n"; exit 1 ;; \
 	esac; \
-	test -f server/.env.local && printf -- "- server/.env.local present\n" || { printf -- "- missing server/.env.local\n"; exit 1; }; \
-	grep -Eq '^AGORA_APP_ID=.+$$' server/.env.local && printf -- "- AGORA_APP_ID configured\n" || { printf -- "- AGORA_APP_ID missing in server/.env.local\n"; exit 1; }; \
-	grep -Eq '^AGORA_APP_CERTIFICATE=.+$$' server/.env.local && printf -- "- AGORA_APP_CERTIFICATE configured\n" || { printf -- "- AGORA_APP_CERTIFICATE missing in server/.env.local\n"; exit 1; }
+	test -f server/.env && printf -- "- server/.env present\n" || { printf -- "- missing server/.env\n"; exit 1; }; \
+	grep -Eq '^AGORA_APP_ID=.+$$' server/.env && printf -- "- AGORA_APP_ID configured\n" || { printf -- "- AGORA_APP_ID missing in server/.env\n"; exit 1; }; \
+	grep -Eq '^AGORA_APP_CERTIFICATE=.+$$' server/.env && printf -- "- AGORA_APP_CERTIFICATE configured\n" || { printf -- "- AGORA_APP_CERTIFICATE missing in server/.env\n"; exit 1; }
 
 fmt: fmt-backend
 

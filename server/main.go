@@ -137,7 +137,6 @@ func loadEnvFiles() {
 		return
 	}
 
-	_ = godotenv.Load(filepath.Join(baseDir, ".env.local"))
 	_ = godotenv.Load(filepath.Join(baseDir, ".env"))
 }
 

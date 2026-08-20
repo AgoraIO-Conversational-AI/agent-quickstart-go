@@ -18,7 +18,7 @@ pnpm install
 cd server && go mod tidy
 ```
 
-`make setup` chains `setup-env` (copies `server/.env.example` → `server/.env.local` if missing), `setup-backend` (`go mod tidy`), and `setup-frontend` (`pnpm install` when `node_modules/` is missing).
+`make setup` chains `setup-env` (copies `server/.env.example` → `server/.env` if missing), `setup-backend` (`go mod tidy`), and `setup-frontend` (`pnpm install` when `node_modules/` is missing). It preserves an existing `server/.env` written by `agora init` or `agora quickstart env write`.
 
 ## Environment Variables
 
@@ -29,12 +29,6 @@ AGORA_APP_ID=your_agora_app_id
 AGORA_APP_CERTIFICATE=your_agora_app_certificate
 AGENT_GREETING=Hi there! I'm Ada, your virtual assistant from Agora. How can I help?
 PORT=8000
-```
-
-`client/.env.local.example`:
-
-```
-AGENT_BACKEND_URL=http://localhost:8000
 ```
 
 | Variable                 | Process     | Required | Notes                                                                 |
@@ -51,7 +45,7 @@ AGENT_BACKEND_URL=http://localhost:8000
 ```bash
 make setup            # one-time bootstrap
 make doctor           # pnpm + node_modules presence
-make doctor-local     # adds Go + .env.local + Agora credential presence
+make doctor-local     # adds Go + server/.env + Agora credential presence
 make dev              # spawns Gin + Next dev with AGENT_BACKEND_URL set
 make fmt              # gofmt server *.go and cmd/fake-server/*.go
 make build            # build-backend + build-web
@@ -89,7 +83,7 @@ The root `package.json` exposes the same workflows under `pnpm run setup`, `pnpm
 ## Common Setup Failures
 
 - `make doctor-local` reports **"Go version not supported"** → install Go 1.23+.
-- Doctor fails on missing `server/.env.local` → run `make setup-env` or copy from `server/.env.example`.
+- Doctor fails on missing `server/.env` → run `agora quickstart env write .` or `make setup-env`.
 - `make verify-web-api` fails on a new route → extend `client/scripts/verify-api-contracts.ts` to cover it.
 - `make dev` exits with port-in-use → either Gin or Next is already running; check ports 8000 and 3000.
 

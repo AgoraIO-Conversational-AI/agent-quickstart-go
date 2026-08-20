@@ -102,7 +102,7 @@ Edit the `adaPrompt` string constant at the top of `agent.go`. Keep it concise â
 
 ### Change the greeting
 
-Set `AGENT_GREETING` in `server/.env.local`, or edit the fallback default in `newAgentService`.
+Set `AGENT_GREETING` in `server/.env`, or edit the fallback default in `newAgentService`.
 
 ### Change VAD
 
@@ -157,7 +157,7 @@ After editing `agent.go`, run `make fmt && make verify-backend`.
 
 | Symptom                                              | Cause                                                                  |
 | ---------------------------------------------------- | ---------------------------------------------------------------------- |
-| `500 Service not properly configured`                | Missing `AGORA_APP_ID` / `AGORA_APP_CERTIFICATE` in `server/.env.local`. |
+| `500 Service not properly configured`                | Missing `AGORA_APP_ID` / `AGORA_APP_CERTIFICATE` in `server/.env`.       |
 | Agent joins but never speaks                         | TTS vendor key missing or wrong `VoiceID`.                              |
 | Agent state stuck in `IDLE`                          | `EnableRtm` is `false` in `WithAdvancedFeatures`, or RTM subscribed before login. |
 | Metrics events missing                               | `EnableMetrics` is not true, `DataChannel` is not `"rtm"`, or the managed service did not emit metrics. |

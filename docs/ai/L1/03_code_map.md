@@ -45,7 +45,7 @@ client/                   # Next.js 16 web app
       conversation.ts     # AgoraTokenData, AgoraRenewalTokens, ConversationComponentProps
   public/                 # favicon.svg, agora logos, site.webmanifest
   scripts/
-    doctor.ts             # Requires .env.local.example + valid AGENT_BACKEND_URL
+    doctor.ts             # Requires valid AGENT_BACKEND_URL process env
     verify-api-contracts.ts
     verify-local-proxy.ts
     verify-local-go.ts

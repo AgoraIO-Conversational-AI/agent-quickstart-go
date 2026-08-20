@@ -20,7 +20,7 @@
 Edit `server/agent.go`:
 
 - **Prompt:** modify the `adaPrompt` constant.
-- **Greeting:** modify the default greeting in `newAgentService`, or set `AGENT_GREETING` in `server/.env.local`.
+- **Greeting:** modify the default greeting in `newAgentService`, or set `AGENT_GREETING` in `server/.env`.
 - **VAD:** edit `TurnDetectionConfig` (`SpeechThreshold`, `InterruptDurationMs`, `PrefixPaddingMs`, `SilenceDurationMs`, start/end mode).
 - **LLM:** change `vendors.NewOpenAI(...)` arguments.
 - **STT:** change `vendors.NewDeepgramSTT(...)`.

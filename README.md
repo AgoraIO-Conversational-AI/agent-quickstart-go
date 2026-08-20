@@ -29,7 +29,6 @@ Install the CLI (skip if already installed), scaffold the Go quickstart, install
    agora init my-go-demo --template go
    cd my-go-demo
    make setup
-   agora project env write server/.env.local --with-secrets
    make dev
    ```
 
@@ -47,7 +46,7 @@ cd agent-quickstart-go
 agora login
 agora project use <your-project>
 make setup
-agora project env write server/.env.local --with-secrets
+agora quickstart env write .
 make doctor-local
 make dev
 ```
@@ -81,8 +80,8 @@ To export env values from your Agora CLI-bound project:
 
 ```bash
 agora project use <your-project>
-agora project env write server/.env.local --with-secrets
-rg "^(AGORA_APP_ID|AGORA_APP_CERTIFICATE)=" server/.env.local
+agora quickstart env write .
+rg "^(AGORA_APP_ID|AGORA_APP_CERTIFICATE)=" server/.env
 ```
 
 ## Environment variables
@@ -153,8 +152,8 @@ The browser always calls Next `/api/*` paths. In local and deployed modes those 
 
 ## Troubleshooting
 
-- **`make doctor-local` fails:** confirm Go 1.23+ and non-empty `AGORA_APP_ID` + `AGORA_APP_CERTIFICATE` in `server/.env.local`.
-- **Credentials missing:** run `agora project env write server/.env.local --with-secrets`.
+- **`make doctor-local` fails:** confirm Go 1.23+ and non-empty `AGORA_APP_ID` + `AGORA_APP_CERTIFICATE` in `server/.env`.
+- **Credentials missing:** run `agora quickstart env write .`.
 - **Frontend cannot reach backend:** confirm the Go service is running and the frontend has `AGENT_BACKEND_URL` set to that service URL.
 - **Agent does not join channel:** verify the selected Agora project has Conversational AI managed provider support enabled.
 - **Unsure who owns `/api/*`:** Next owns the browser-facing paths as rewrites; Gin owns the backend handlers.

@@ -15,7 +15,7 @@
 | -------------- | ---------------------------------------------------------------------- |
 | Browser        | `NEXT_PUBLIC_AGENT_UID` (optional)                                     |
 | Next build/run | `AGENT_BACKEND_URL`                                                    |
-| Go server      | `AGORA_APP_ID`, `AGORA_APP_CERTIFICATE`, `AGENT_GREETING`, `PORT`      |
+| Go server      | `AGORA_APP_ID`, `AGORA_APP_CERTIFICATE`, `PORT`                         |
 
 Mark `AGORA_APP_CERTIFICATE` as secret in whichever deploy host runs the Go service. The certificate value never appears in `client/`.
 

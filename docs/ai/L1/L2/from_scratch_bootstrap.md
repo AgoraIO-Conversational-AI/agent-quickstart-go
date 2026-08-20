@@ -27,7 +27,7 @@ Implement these pieces in order:
 
 1. Create a pnpm workspace with `client` as a workspace member and root Make targets that orchestrate backend, frontend, setup, doctor, verify, and clean tasks.
 2. Create `server/` as a Go 1.23+ module with Gin, gin-contrib CORS, godotenv, and `github.com/AgoraIO/agora-agents-go/v2`.
-3. Add `server/.env.example` with `AGORA_APP_ID`, `AGORA_APP_CERTIFICATE`, optional `AGENT_GREETING`, and optional `PORT`.
+3. Add `server/.env.example` with `AGORA_APP_ID`, `AGORA_APP_CERTIFICATE`, and optional `PORT`.
 4. Implement `server/agent.go` with `agentService` that reads env once, constructs `agentkit.AgoraClient`, generates one-hour RTC+RTM ConvoAI tokens, builds managed `DeepgramSTT`, `OpenAI`, and `MiniMaxTTS` agents, starts sessions, stores sessions by `agent_id`, and stops by active session or SDK fallback.
 5. Implement `server/main.go` with `GET /get_config`, `POST /startAgent`, and `POST /stopAgent`; load `.env` from the `server/` working directory.
 6. In `GET /get_config`, replace missing, zero, or negative UIDs with a generated non-zero UID, generate a one-hour token with `agentkit.GenerateConvoAIToken`, and return `{ app_id, token, uid, channel_name, agent_uid }`.

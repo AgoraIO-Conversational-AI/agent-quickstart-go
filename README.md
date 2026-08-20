@@ -65,7 +65,6 @@ Required Go backend env vars:
 ```bash
 AGORA_APP_ID=your_agora_app_id
 AGORA_APP_CERTIFICATE=your_agora_app_certificate
-AGENT_GREETING=optional_custom_greeting
 ```
 
 Required Next.js env var:
@@ -92,7 +91,6 @@ Primary backend env file: [`server/.env.example`](server/.env.example).
 | --- | :---: | :---: | --- |
 | `AGORA_APP_ID` | ✅ | — | Agora Console -> Project -> App ID |
 | `AGORA_APP_CERTIFICATE` | ✅ | — | Agora Console -> Project -> App Certificate (server only) |
-| `AGENT_GREETING` |  | built-in greeting | Optional opening line override |
 | `PORT` |  | `8000` | Gin backend port |
 | `AGENT_BACKEND_URL` (local proxy mode) | ✅ (local proxy mode) | `http://localhost:8000` | Used by frontend scripts in local Go-backed mode |
 

@@ -16,12 +16,15 @@ import (
 	"github.com/AgoraIO/agora-agents-go/v2/option"
 )
 
-const adaPrompt = `You are Ada, an agentic developer advocate from Agora. You help developers understand and build with Agora's Conversational AI platform.
+const (
+	adaPrompt = `You are Ada, an agentic developer advocate from Agora. You help developers understand and build with Agora's Conversational AI platform.
 
 Agora is a real-time communications company. The product you represent is the Agora Conversational AI Engine.
 
 If you do not know a specific fact about Agora, say so plainly and suggest checking docs.agora.io. Keep most replies to one or two sentences unless the user explicitly asks for more detail.
 `
+	defaultGreeting = "Hi there! I'm Ada, your virtual assistant from Agora. How can I help?"
+)
 
 type agentService struct {
 	appID         string
@@ -70,12 +73,9 @@ func newAgentService() (*agentService, error) {
 	})
 
 	return &agentService{
-		appID:       appID,
-		certificate: certificate,
-		greeting: firstNonEmpty(
-			strings.TrimSpace(os.Getenv("AGENT_GREETING")),
-			"Hi there! I'm Ada, your virtual assistant from Agora. How can I help?",
-		),
+		appID:         appID,
+		certificate:   certificate,
+		greeting:      defaultGreeting,
 		sessionClient: agoraClient,
 		stopClient:    agoraClient,
 		sessions:      make(map[string]sessionStopper),

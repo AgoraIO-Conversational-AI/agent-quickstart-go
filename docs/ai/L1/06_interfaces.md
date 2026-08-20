@@ -35,7 +35,7 @@ Error responses use `{ "detail": "..." }`, not the success envelope.
 | Scope                | Variable                                  |
 | -------------------- | ----------------------------------------- |
 | Go server (required) | `AGORA_APP_ID`, `AGORA_APP_CERTIFICATE`   |
-| Go server (optional) | `AGENT_GREETING`, `PORT`                  |
+| Go server (optional) | `PORT`                                    |
 | Next build           | `AGENT_BACKEND_URL`                       |
 | Browser              | `NEXT_PUBLIC_AGENT_UID` (optional override) |
 

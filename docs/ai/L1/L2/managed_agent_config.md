@@ -102,7 +102,7 @@ Edit the `adaPrompt` string constant at the top of `agent.go`. Keep it concise â
 
 ### Change the greeting
 
-Set `AGENT_GREETING` in `server/.env`, or edit the fallback default in `newAgentService`.
+Change `defaultGreeting` in `server/agent.go`.
 
 ### Change VAD
 

@@ -20,7 +20,7 @@
 Edit `server/agent.go`:
 
 - **Prompt:** modify the `adaPrompt` constant.
-- **Greeting:** modify the default greeting in `newAgentService`, or set `AGENT_GREETING` in `server/.env`.
+- **Greeting:** change `defaultGreeting` in `server/agent.go`.
 - **VAD:** edit `TurnDetectionConfig` (`SpeechThreshold`, `InterruptDurationMs`, `PrefixPaddingMs`, `SilenceDurationMs`, start/end mode).
 - **LLM:** change `vendors.NewOpenAI(...)` arguments.
 - **STT:** change `vendors.NewDeepgramSTT(...)`.
@@ -33,7 +33,7 @@ After editing, run `make fmt` and `make verify-backend`.
 ## Deploy the Client and Backend Separately
 
 - **Client (Next.js):** build via `cd client && pnpm build`. Configure `AGENT_BACKEND_URL` on the deploy target to the public URL of your Go service. Serve with `pnpm start` or any Node hosting platform.
-- **Backend (Go):** `make build-backend` produces `server/bin/agent-quickstart-go`. Set `AGORA_APP_ID`, `AGORA_APP_CERTIFICATE`, and optionally `AGENT_GREETING` / `PORT` in the runtime env. Expose `PORT` to your reverse proxy / load balancer.
+- **Backend (Go):** `make build-backend` produces `server/bin/agent-quickstart-go`. Set `AGORA_APP_ID`, `AGORA_APP_CERTIFICATE`, and optionally `PORT` in the runtime env. Expose `PORT` to your reverse proxy / load balancer.
 - The two deploys never share env vars. The browser only ever needs `/api/*` to resolve via the rewrite layer.
 
 ## Verify Locally

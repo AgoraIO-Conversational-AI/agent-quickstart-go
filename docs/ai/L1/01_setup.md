@@ -27,7 +27,6 @@ cd server && go mod tidy
 ```
 AGORA_APP_ID=your_agora_app_id
 AGORA_APP_CERTIFICATE=your_agora_app_certificate
-AGENT_GREETING=Hi there! I'm Ada, your virtual assistant from Agora. How can I help?
 PORT=8000
 ```
 
@@ -35,7 +34,6 @@ PORT=8000
 | ------------------------ | ----------- | -------- | --------------------------------------------------------------------- |
 | `AGORA_APP_ID`           | Go (server) | Yes      | Loaded in `newAgentService`.                                          |
 | `AGORA_APP_CERTIFICATE`  | Go (server) | Yes      | Loaded in `newAgentService`; never exposed to the browser.            |
-| `AGENT_GREETING`         | Go (server) | No       | Optional first utterance.                                             |
 | `PORT`                   | Go (server) | No       | Default `8000` (`main.go`).                                            |
 | `AGENT_BACKEND_URL`      | Next build  | Yes for rewrites | Empty/missing means no `/api/*` rewrites are registered.       |
 | `NEXT_PUBLIC_AGENT_UID`  | Browser     | No       | Optional override read in `ConversationComponent.tsx`.                |

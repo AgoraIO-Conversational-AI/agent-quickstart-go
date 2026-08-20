@@ -62,7 +62,7 @@ server/                   # Go (Gin) backend
   main_test.go            # Go unit tests covering routes + agentService
   cmd/fake-server/
     main.go               # Fake /get_config/startAgent/stopAgent for smoke tests
-  .env.example            # AGORA_APP_ID, AGORA_APP_CERTIFICATE, AGENT_GREETING, PORT
+  .env.example            # AGORA_APP_ID, AGORA_APP_CERTIFICATE, PORT
   README.md
 ```
 

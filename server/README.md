@@ -58,7 +58,6 @@ Required env vars:
 
 Optional:
 
-- `AGENT_GREETING`
 - `PORT`
 
 Example:
@@ -66,7 +65,6 @@ Example:
 ```bash
 AGORA_APP_ID=your_agora_app_id
 AGORA_APP_CERTIFICATE=your_agora_app_certificate
-AGENT_GREETING=Hi there! I'm Ada, your virtual assistant from Agora. How can I help?
 PORT=8000
 ```
 

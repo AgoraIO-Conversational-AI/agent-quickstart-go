@@ -62,7 +62,7 @@ Do not recreate Agora ConvoAI integration from memory. Provider schemas, SDK bui
 
 | ID | Surface | Files | Intended Changes |
 | -- | ------- | ----- | ---------------- |
-| `agent.prompt` | Agent identity and first utterance | `server/agent.go`, `server/.env.example` | Change `adaPrompt`, the fallback greeting, or document `AGENT_GREETING` defaults. |
+| `agent.prompt` | Agent identity and first utterance | `server/agent.go` | Change `adaPrompt` or `defaultGreeting`. |
 | `agent.pipeline` | Managed provider chain and session behavior | `server/agent.go`, `docs/ai/L1/L2/managed_agent_config.md` | Tune Deepgram STT, OpenAI LLM, MiniMax TTS, VAD, RTM parameters, metrics, idle timeout, or session expiry. |
 | `api.routes` | Backend and browser API contract | `server/main.go`, `client/next.config.ts`, `client/src/services/api.ts`, `client/scripts/verify-api-contracts.ts` | Add or change route handlers, rewrites, request bodies, response payloads, and contract checks together. |
 | `ui.conversation` | Browser conversation experience | `client/src/components/`, `client/src/lib/conversation.ts`, `client/src/types/conversation.ts` | Customize pre-call UI, connection details, transcript rendering, metrics, visualizer, mic controls, or end-call behavior. |
@@ -85,7 +85,7 @@ Do not recreate Agora ConvoAI integration from memory. Provider schemas, SDK bui
 | -------- | ----- |
 | Setup | `make setup` prepares env template, Go deps, and pnpm workspace deps. |
 | Local dev | `make dev` starts Gin on `localhost:8000` and Next on `localhost:3000` with `AGENT_BACKEND_URL=http://localhost:8000`. |
-| Required env | Go server requires `AGORA_APP_ID` and `AGORA_APP_CERTIFICATE`; optional `AGENT_GREETING` and `PORT`. |
+| Required env | Go server requires `AGORA_APP_ID` and `AGORA_APP_CERTIFICATE`; `PORT` is optional. |
 | Rewrite env | Next requires `AGENT_BACKEND_URL` anywhere `/api/*` should resolve to the Go backend. |
 | Config API | `GET /api/get_config?channel=&uid=` returns `{ code, msg, data: { app_id, token, uid, channel_name, agent_uid } }`. |
 | Start API | `POST /api/startAgent` sends `{ channelName, rtcUid, userUid }` and returns `data.agent_id`. |

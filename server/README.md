@@ -12,6 +12,8 @@ Repo setup:
 make setup
 ```
 
+Setup preserves a configured `server/.env` and copies a legacy `server/.env.local` when needed. The completion message reflects the credential state. Setup and `doctor-local` replace an untouched example file with configured legacy credentials.
+
 Agora credentials:
 
 ```bash

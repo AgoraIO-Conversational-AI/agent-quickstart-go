@@ -18,7 +18,7 @@ pnpm install
 cd server && go mod tidy
 ```
 
-`make setup` chains `setup-env` (copies `server/.env.example` → `server/.env` if missing), `setup-backend` (`go mod tidy`), and `setup-frontend` (`pnpm install` when `node_modules/` is missing). It preserves an existing `server/.env` written by `agora init` or `agora quickstart env write`.
+`make setup` chains `setup-env`, `setup-backend`, and `setup-frontend`. Setup preserves a configured `server/.env`, copies a legacy `server/.env.local` to `server/.env` when needed, or seeds `server/.env` from `server/.env.example`. If the seeded file has both example values and a CLI version writes valid credentials to the legacy path, `setup-env` and `doctor-local` copy those credentials into `server/.env`. The completion message omits the credential-writing command when the resulting file has non-placeholder Agora credentials. Backend setup runs `go mod tidy`; frontend setup runs `pnpm install` when `node_modules/` is missing.
 
 ## Environment Variables
 
@@ -81,7 +81,7 @@ The root `package.json` exposes the same workflows under `pnpm run setup`, `pnpm
 ## Common Setup Failures
 
 - `make doctor-local` reports **"Go version not supported"** → install Go 1.23+.
-- Doctor fails on missing `server/.env` → run `agora quickstart env write .` or `make setup-env`.
+- Doctor fails on missing or placeholder credentials in `server/.env` → run `agora quickstart env write .`.
 - `make verify-web-api` fails on a new route → extend `client/scripts/verify-api-contracts.ts` to cover it.
 - `make dev` exits with port-in-use → either Gin or Next is already running; check ports 8000 and 3000.
 

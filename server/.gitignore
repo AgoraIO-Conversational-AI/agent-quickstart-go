@@ -3,3 +3,6 @@ bin/
 *.test
 *.out
 .coverprofile
+
+# Ignore the legacy environment file during setup migration
+.env.local

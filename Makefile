@@ -24,17 +24,10 @@ help:
 	@printf "  make clean            Remove generated artifacts\n"
 
 setup: setup-env setup-backend setup-frontend
-	@printf "\nSetup complete.\n"
-	@printf "Next steps:\n"
-	@printf "  1. Run: agora quickstart env write .\n"
-	@printf "  2. Run: make doctor-local\n"
-	@printf "  3. Run: make dev\n"
+	@bash scripts/setup-server-env.sh next-steps "make doctor-local" "make dev"
 
 setup-env:
-	@if [ ! -f server/.env ]; then \
-		cp server/.env.example server/.env; \
-		printf "\nCreated server/.env. Edit your Agora credentials before running the app.\n"; \
-	fi
+	@bash scripts/setup-server-env.sh prepare
 
 setup-backend:
 	cd server && go mod tidy
@@ -59,9 +52,8 @@ doctor-local: doctor
 		1.23*|1.24*|1.25*|1.26*|2.*) printf -- "- go version $$GO_VERSION\n" ;; \
 		*) printf -- "- go 1.23 or newer is required; found $$GO_VERSION\n"; exit 1 ;; \
 	esac; \
-	test -f server/.env && printf -- "- server/.env present\n" || { printf -- "- missing server/.env\n"; exit 1; }; \
-	grep -Eq '^AGORA_APP_ID=.+$$' server/.env && printf -- "- AGORA_APP_ID configured\n" || { printf -- "- AGORA_APP_ID missing in server/.env\n"; exit 1; }; \
-	grep -Eq '^AGORA_APP_CERTIFICATE=.+$$' server/.env && printf -- "- AGORA_APP_CERTIFICATE configured\n" || { printf -- "- AGORA_APP_CERTIFICATE missing in server/.env\n"; exit 1; }
+	bash scripts/setup-server-env.sh prepare; \
+	bash scripts/setup-server-env.sh check
 
 fmt: fmt-backend
 

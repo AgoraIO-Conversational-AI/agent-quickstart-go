@@ -64,9 +64,9 @@ The quickstart deliberately uses `GenerateConvoAIToken` for both RTC and RTM to 
 
 The repo's git history is short and entirely human-authored. Keep it that way — see `AGENTS.md` "Git Conventions."
 
-## `server/.env.local` Is CWD-Sensitive
+## `server/.env` Is CWD-Sensitive
 
-`loadEnvFiles` reads `.env.local` then `.env` from the **current working directory**. `make dev` and `make backend` run `go run .` from inside `server/`, so they find the file. Running `go run ./server` from the repo root would silently skip it because the CWD is the repo root, not `server/`. Always cd into `server/` for ad-hoc commands.
+`loadEnvFiles` reads `.env` from the **current working directory**. `make dev` and `make backend` run `go run .` from inside `server/`, so they find the file. Running `go run ./server` from the repo root would silently skip it because the CWD is the repo root, not `server/`. Always cd into `server/` for ad-hoc commands.
 
 ## Verify Scripts Spawn Subprocesses
 

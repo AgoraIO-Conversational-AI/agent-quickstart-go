@@ -45,7 +45,7 @@ client/                   # Next.js 16 web app
       conversation.ts     # AgoraTokenData, AgoraRenewalTokens, ConversationComponentProps
   public/                 # favicon.svg, agora logos, site.webmanifest
   scripts/
-    doctor.ts             # Requires .env.local.example + valid AGENT_BACKEND_URL
+    doctor.ts             # Requires valid AGENT_BACKEND_URL process env
     verify-api-contracts.ts
     verify-local-proxy.ts
     verify-local-go.ts
@@ -62,7 +62,7 @@ server/                   # Go (Gin) backend
   main_test.go            # Go unit tests covering routes + agentService
   cmd/fake-server/
     main.go               # Fake /get_config/startAgent/stopAgent for smoke tests
-  .env.example            # AGORA_APP_ID, AGORA_APP_CERTIFICATE, AGENT_GREETING, PORT
+  .env.example            # AGORA_APP_ID, AGORA_APP_CERTIFICATE, PORT
   README.md
 ```
 

@@ -18,7 +18,7 @@ pnpm install
 cd server && go mod tidy
 ```
 
-`make setup` chains `setup-env` (copies `server/.env.example` → `server/.env.local` if missing), `setup-backend` (`go mod tidy`), and `setup-frontend` (`pnpm install` when `node_modules/` is missing).
+`make setup` chains `setup-env`, `setup-backend`, and `setup-frontend`. Setup preserves a configured `server/.env`, copies a legacy `server/.env.local` to `server/.env` when needed, or seeds `server/.env` from `server/.env.example`. If the seeded file has both example values and a CLI version writes valid credentials to the legacy path, `setup-env` and `doctor-local` copy those credentials into `server/.env`. The completion message omits the credential-writing command when the resulting file has non-placeholder Agora credentials. Backend setup runs `go mod tidy`; frontend setup runs `pnpm install` when `node_modules/` is missing.
 
 ## Environment Variables
 
@@ -27,21 +27,13 @@ cd server && go mod tidy
 ```
 AGORA_APP_ID=your_agora_app_id
 AGORA_APP_CERTIFICATE=your_agora_app_certificate
-AGENT_GREETING=Hi there! I'm Ada, your virtual assistant from Agora. How can I help?
 PORT=8000
-```
-
-`client/.env.local.example`:
-
-```
-AGENT_BACKEND_URL=http://localhost:8000
 ```
 
 | Variable                 | Process     | Required | Notes                                                                 |
 | ------------------------ | ----------- | -------- | --------------------------------------------------------------------- |
 | `AGORA_APP_ID`           | Go (server) | Yes      | Loaded in `newAgentService`.                                          |
 | `AGORA_APP_CERTIFICATE`  | Go (server) | Yes      | Loaded in `newAgentService`; never exposed to the browser.            |
-| `AGENT_GREETING`         | Go (server) | No       | Optional first utterance.                                             |
 | `PORT`                   | Go (server) | No       | Default `8000` (`main.go`).                                            |
 | `AGENT_BACKEND_URL`      | Next build  | Yes for rewrites | Empty/missing means no `/api/*` rewrites are registered.       |
 | `NEXT_PUBLIC_AGENT_UID`  | Browser     | No       | Optional override read in `ConversationComponent.tsx`.                |
@@ -51,7 +43,7 @@ AGENT_BACKEND_URL=http://localhost:8000
 ```bash
 make setup            # one-time bootstrap
 make doctor           # pnpm + node_modules presence
-make doctor-local     # adds Go + .env.local + Agora credential presence
+make doctor-local     # adds Go + server/.env + Agora credential presence
 make dev              # spawns Gin + Next dev with AGENT_BACKEND_URL set
 make fmt              # gofmt server *.go and cmd/fake-server/*.go
 make build            # build-backend + build-web
@@ -89,7 +81,7 @@ The root `package.json` exposes the same workflows under `pnpm run setup`, `pnpm
 ## Common Setup Failures
 
 - `make doctor-local` reports **"Go version not supported"** → install Go 1.23+.
-- Doctor fails on missing `server/.env.local` → run `make setup-env` or copy from `server/.env.example`.
+- Doctor fails on missing or placeholder credentials in `server/.env` → run `agora quickstart env write .`.
 - `make verify-web-api` fails on a new route → extend `client/scripts/verify-api-contracts.ts` to cover it.
 - `make dev` exits with port-in-use → either Gin or Next is already running; check ports 8000 and 3000.
 

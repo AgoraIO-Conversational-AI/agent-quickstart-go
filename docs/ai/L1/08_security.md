@@ -15,7 +15,7 @@
 | -------------- | ---------------------------------------------------------------------- |
 | Browser        | `NEXT_PUBLIC_AGENT_UID` (optional)                                     |
 | Next build/run | `AGENT_BACKEND_URL`                                                    |
-| Go server      | `AGORA_APP_ID`, `AGORA_APP_CERTIFICATE`, `AGENT_GREETING`, `PORT`      |
+| Go server      | `AGORA_APP_ID`, `AGORA_APP_CERTIFICATE`, `PORT`                         |
 
 Mark `AGORA_APP_CERTIFICATE` as secret in whichever deploy host runs the Go service. The certificate value never appears in `client/`.
 
@@ -62,9 +62,9 @@ If you need real auth, add a middleware step in `server/main.go` that validates 
 
 ## Secret Handling Rules
 
-- `server/.env.local` is the developer's secret store; do not commit it.
+- `server/.env` is the developer's secret store; do not commit it.
 - `server/.env.example` documents shape only — never put real values there.
-- `loadEnvFiles` reads `.env.local` then `.env` from the current working directory; running `go run .` from anywhere except `server/` will skip the env file.
+- `loadEnvFiles` reads `.env` from the current working directory; running `go run .` from anywhere except `server/` will skip the env file.
 - Do not log full env. `log.Printf("failed: %s", err)` is fine; logging `os.Getenv("AGORA_APP_CERTIFICATE")` is not.
 
 ## CSP / Security Headers

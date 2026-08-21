@@ -22,12 +22,12 @@
 
 ## 3. Runtime & Environment
 
-- Environment variables: `.env.local` files and process env
+- Environment variables: process env
 - Required local proxy variable:
   - `AGENT_BACKEND_URL` - Go backend URL for Next rewrites, usually `http://localhost:8000`
 - Entry point: `app/page.tsx`
 - Default port: 3000
-- Secrets handling: Agora credentials stay in `server/.env.local`; the browser receives short-lived tokens from the backend
+- Secrets handling: Agora credentials stay in `server/.env`; the browser receives short-lived tokens from the backend
 
 ## 4. Dependencies & External Services
 

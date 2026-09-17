@@ -27,7 +27,7 @@
    - `new AgoraRTM.RTM(appId, uid).login({ token })` → `subscribe(channel_name)`.
 3. `ConversationComponent` mounts inside a dynamic `AgoraRTCProvider` (client held in `useRef` for StrictMode safety) and:
    - `useJoin` joins the RTC channel.
-   - `AgoraVoiceAI.init({ rtcEngine, rtmConfig: { rtmEngine: rtmClient } })` wires transcripts, state, metrics.
+   - `AgoraVoiceAI.init({ rtcEngine, rtmEngine: rtmClient })` wires transcripts, state, metrics.
    - `subscribeMessage(channel_name)` opens the toolkit's RTM channel for events.
 4. End: `stopAgent(agentId)` → `POST /api/stopAgent` → Gin stops the agent. `rtmClient.logout()` follows.
 5. Renewal: on RTC `token-privilege-will-expire`, the client fetches `getConfig()` twice (once for RTC `client.uid`, once for the stored `agoraData.uid`) and renews RTC + RTM separately.

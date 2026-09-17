@@ -76,6 +76,10 @@ The repo's git history is short and entirely human-authored. Keep it that way â€
 
 RTM delivery, tool enablement, error messages, and data channel settings belong in `server/agent.go`. The browser only consumes the resulting events; it should not invent server-side agent parameters.
 
+## Toolkit 2.10.0 Migration
+
+Pass `rtmEngine` directly to `AgoraVoiceAI.init`; the nested `rtmConfig` is no longer supported. UIKit 1.1.0 declares an optional Toolkit ^1.2.0 peer, while this workspace resolves Toolkit 2.10.0. Validate transcript, agent state, metrics, and teardown in a real call before shipping.
+
 ## Related Deep Dives
 
 - [Managed Agent Config](L2/managed_agent_config.md) â€” Server-side defaults.
